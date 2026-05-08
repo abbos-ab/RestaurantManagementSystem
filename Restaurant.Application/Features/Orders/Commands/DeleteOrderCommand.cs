@@ -2,6 +2,7 @@ using FluentValidation;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Domain.Entities;
 using Restaurant.Shared.CQRS.Commands;
+using Restaurant.Shared.Exceptions;
 
 namespace Restaurant.Application.Features.Orders.Commands;
 
@@ -14,7 +15,7 @@ public sealed class DeleteOrderCommandValidator : AbstractValidator<DeleteOrderC
     {
         RuleFor(x => x.Id)
             .GreaterThan(0)
-            .WithMessage("OrderItemId must be greater than 0");
+            .WithMessage("OrderId must be greater than 0");
     }
 }
 
@@ -33,13 +34,12 @@ internal sealed class DeleteOrderCommandHandler
         var order = await _orderRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (order is null)
-            throw new Exception("Order not found");
-        
+            throw new BusinessLogicException(OrderErrors.NotFound);
+
         if (order.Status == OrderStatus.Completed)
-            throw new Exception("Completed order cannot be deleted");
+            throw new BusinessLogicException(OrderErrors.CannotDeleteCompletedOrder);
 
         await _orderRepository.DeleteAsync(order, cancellationToken);
-
         return true;
     }
 }

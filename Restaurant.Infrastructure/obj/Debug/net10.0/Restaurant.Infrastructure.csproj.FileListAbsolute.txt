@@ -19,3 +19,4 @@ C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Infrastructure\o
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Infrastructure\obj\Debug\net10.0\ref\Restaurant.Infrastructure.dll
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Infrastructure\bin\Debug\net10.0\Restaurant.Shared.dll
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Infrastructure\bin\Debug\net10.0\Restaurant.Shared.pdb
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Infrastructure\obj\Debug\net10.0\Restaurant.Infrastructure.sourcelink.json

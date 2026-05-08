@@ -9,3 +9,4 @@ C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Domain\obj\Debug
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Domain\obj\Debug\net10.0\refint\Restaurant.Domain.dll
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Domain\obj\Debug\net10.0\Restaurant.Domain.pdb
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Domain\obj\Debug\net10.0\ref\Restaurant.Domain.dll
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Domain\obj\Debug\net10.0\Restaurant.Domain.sourcelink.json

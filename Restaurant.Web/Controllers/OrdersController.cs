@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.Application.Features.Orders.Commands;
+using Restaurant.Application.Features.Orders.Models;
 using Restaurant.Application.Features.Orders.Queries;
 using Restaurant.Domain.Entities;
 using Restaurant.Shared.Common.Models;
@@ -8,7 +9,7 @@ using Restaurant.Shared.Common.Models;
 namespace Restaurant.Web.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 public class OrdersController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -47,6 +48,15 @@ public class OrdersController : ControllerBase
     {
         var result = await _mediator.Send(command, cancellationToken);
         return Ok(result);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<bool>> CreateOrderItem(
+        [FromQuery]long orderId,
+        [FromBody] List<CreateOrderItemDto> items,
+        CancellationToken cancellationToken = default)
+    {
+        return await _mediator.Send(new CreateOrderItemsCommand(orderId, items), cancellationToken);
     }
 
     [HttpPut("{id:long}/status")]

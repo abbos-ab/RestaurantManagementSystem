@@ -14,7 +14,7 @@ public sealed class GetOrderByIdValidator : AbstractValidator<GetOrderById>
     {
         RuleFor(order => order.Id)
             .GreaterThan(0)
-            .WithMessage("Order id must be greater than 0");
+            .WithMessage("OrderId must be greater than 0");
     }
 }
 

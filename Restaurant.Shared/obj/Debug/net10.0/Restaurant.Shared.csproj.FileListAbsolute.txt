@@ -10,3 +10,4 @@ C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Shared\obj\Debug
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Shared\obj\Debug\net10.0\refint\Restaurant.Shared.dll
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Shared\obj\Debug\net10.0\Restaurant.Shared.pdb
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Shared\obj\Debug\net10.0\ref\Restaurant.Shared.dll
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Shared\obj\Debug\net10.0\Restaurant.Shared.sourcelink.json

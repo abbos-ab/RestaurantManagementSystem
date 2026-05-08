@@ -12,7 +12,7 @@
 
         public decimal TotalPrice { get; set; }
 
-        public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public List<OrderItem> OrderItems { get; set; }
     }
 
     public enum OrderStatus

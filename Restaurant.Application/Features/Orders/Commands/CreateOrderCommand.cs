@@ -3,6 +3,7 @@ using Restaurant.Application.Features.Dishes;
 using Restaurant.Application.Features.Dishes.Repositories;
 using Restaurant.Application.Features.Inventories;
 using Restaurant.Application.Features.Inventories.Repositories;
+using Restaurant.Application.Features.Inventories.Specifications;
 using Restaurant.Application.Features.Orders.Models;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Domain.Entities;
@@ -39,16 +40,18 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
     private readonly IDishRepository _dishRepository;
     private readonly IInventoryRepository _inventoryRepository;
     private readonly TimeProvider _timeProvider;
+    private readonly OrderMapper _mapper;
 
     public CreateOrderCommandHandler(
         IOrderRepository orderRepository,
         IDishRepository dishRepository,
         IInventoryRepository inventoryRepository,
-        TimeProvider timeProvider)
+        TimeProvider timeProvider, OrderMapper mapper)
     {
         _orderRepository = orderRepository;
         _dishRepository = dishRepository;
         _timeProvider = timeProvider;
+        _mapper = mapper;
         _inventoryRepository = inventoryRepository;
     }
 
@@ -61,6 +64,8 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
             Status = OrderStatus.Created,
             CreatedAt = _timeProvider.GetLocalDateTimeNowKindUtc(),
         };
+
+        await _orderRepository.AddAsync(order, cancellationToken);
 
         decimal total = 0;
 
@@ -81,36 +86,24 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
 
             total += dish.Price * item.Quantity;
 
-            var dishInventory = await _inventoryRepository.GetByIdAsync(item.DishId, cancellationToken);
+            var spec = new InventoryByDishIdSpec(item.DishId);
+            var dishInventory = await _inventoryRepository.FirstOrDefaultAsync(spec, cancellationToken);
 
             if (dishInventory is null)
-                throw new BusinessLogicException(DishErrors.NotFound);
+                throw new BusinessLogicException(InventoryErrors.NotFound);
 
-            if (dishInventory.Quantity < 1)
+            if (dishInventory.Quantity < item.Quantity)
                 throw new ResourceNotFoundException(InventoryErrors.OutOfStock);
 
             order.OrderItems.Add(orderItem);
+
+            dishInventory.Quantity -= item.Quantity;
+            await _inventoryRepository.SaveChangesAsync(cancellationToken);
         }
 
-        order.TotalPrice = total;
+        order.TotalPrice += total;
+        await _orderRepository.SaveChangesAsync(cancellationToken);
 
-        await _orderRepository.AddAsync(order, cancellationToken);
-
-        return new OrderDto
-        {
-            Id = order.Id,
-            TableId = order.TableId,
-            WaiterId = order.WaiterId,
-            TotalPrice = order.TotalPrice,
-            Status = order.Status.ToString(),
-            Items = order.OrderItems.Select(x => new OrderItemDto
-            {
-                Id = x.Id,
-                DishId = x.DishId,
-                Quantity = x.Quantity,
-                Price = x.Price,
-                Status = x.Status.ToString()
-            }).ToList()
-        };
+        return _mapper.Map(order);
     }
 }

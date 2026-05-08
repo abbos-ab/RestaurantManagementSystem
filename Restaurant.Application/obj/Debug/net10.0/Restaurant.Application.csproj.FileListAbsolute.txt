@@ -15,3 +15,4 @@ C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\obj\
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\obj\Debug\net10.0\ref\Restaurant.Application.dll
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\bin\Debug\net10.0\Restaurant.Shared.dll
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\bin\Debug\net10.0\Restaurant.Shared.pdb
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\obj\Debug\net10.0\Restaurant.Application.sourcelink.json

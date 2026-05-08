@@ -3,6 +3,7 @@ using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Domain.Entities;
 using Restaurant.Shared.CQRS.Commands;
 using Restaurant.Shared.Exceptions;
+using Restaurant.Shared.Extensions;
 
 namespace Restaurant.Application.Features.Orders.Commands;
 
@@ -25,10 +26,14 @@ public sealed class UpdateOrderStatusCommandValidator : AbstractValidator<Update
 internal sealed class UpdateOrderStatusCommandHandler : ICommandHandler<UpdateOrderStatusCommand, bool>
 {
     private readonly IOrderRepository _orderRepository;
+    private readonly TimeProvider _timeProvider;
 
-    public UpdateOrderStatusCommandHandler(IOrderRepository orderRepository)
+    public UpdateOrderStatusCommandHandler(
+        IOrderRepository orderRepository, 
+        TimeProvider timeProvider)
     {
         _orderRepository = orderRepository;
+        _timeProvider = timeProvider;
     }
 
     public async Task<bool> Handle(UpdateOrderStatusCommand request, CancellationToken cancellationToken)
@@ -39,6 +44,7 @@ internal sealed class UpdateOrderStatusCommandHandler : ICommandHandler<UpdateOr
             throw new BusinessLogicException(OrderErrors.NotFound);
 
         order.Status = request.Status;
+        order.UpdatedAt = _timeProvider.GetLocalDateTimeNowKindUtc();
 
         await _orderRepository.UpdateAsync(order, cancellationToken);
 

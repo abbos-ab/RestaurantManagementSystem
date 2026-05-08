@@ -22,7 +22,6 @@ internal sealed class GetOrdersByStatusQueryHandler
     public async Task<List<OrderDto>> Handle(GetOrdersByStatusQuery request, CancellationToken cancellationToken)
     {
         var spec = new OrderByStatusSpec(request.Status);
-
         var orders = await _orderRepository.ListAsync(spec, cancellationToken);
 
         return _mapper.Map(orders);

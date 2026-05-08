@@ -8,4 +8,9 @@ public static class OrderErrors
         "Order.NotFound",
         "Order not found"
     );
+
+    public static readonly Error CannotDeleteCompletedOrder = new(
+        "Order.CannotDeleteCompletedOrder",
+        "Cannot delete completed order"
+    );
 }
