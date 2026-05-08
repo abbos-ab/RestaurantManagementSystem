@@ -1,0 +1,17 @@
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\bin\Debug\net10.0\Restaurant.Application.deps.json
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\bin\Debug\net10.0\Restaurant.Application.dll
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\bin\Debug\net10.0\Restaurant.Application.pdb
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\bin\Debug\net10.0\Restaurant.Domain.dll
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\bin\Debug\net10.0\Restaurant.Domain.pdb
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\obj\Debug\net10.0\Restaurant.Application.csproj.AssemblyReference.cache
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\obj\Debug\net10.0\Restaurant.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\obj\Debug\net10.0\Restaurant.Application.AssemblyInfoInputs.cache
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\obj\Debug\net10.0\Restaurant.Application.AssemblyInfo.cs
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\obj\Debug\net10.0\Restaurant.Application.csproj.CoreCompileInputs.cache
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\obj\Debug\net10.0\Restaura.8ED4ADA1.Up2Date
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\obj\Debug\net10.0\Restaurant.Application.dll
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\obj\Debug\net10.0\refint\Restaurant.Application.dll
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\obj\Debug\net10.0\Restaurant.Application.pdb
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\obj\Debug\net10.0\ref\Restaurant.Application.dll
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\bin\Debug\net10.0\Restaurant.Shared.dll
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Application\bin\Debug\net10.0\Restaurant.Shared.pdb
