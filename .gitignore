@@ -1,0 +1,37 @@
+# =========================
+# .NET
+# =========================
+
+bin/
+obj/
+out/
+publish/
+
+# Debug / Release
+Debug/
+Release/
+
+# NuGet generated
+*.nuget.dgspec.json
+*.nuget.g.props
+*.nuget.g.targets
+project.assets.json
+project.nuget.cache
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# JetBrains
+.idea/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test
+TestResults/
