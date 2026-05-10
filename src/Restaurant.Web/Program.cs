@@ -22,10 +22,10 @@ builder.Services.AddRepositories();
 
 builder.Services.AddApplicationServices();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    ));
+    options.UseNpgsql(connectionString));
 
 var app = builder.Build();
 
