@@ -35,3 +35,7 @@ Thumbs.db
 
 # Test
 TestResults/
+
+# ASP.NET Core
+appsettings.Development.json
+appsettings.Production.json
