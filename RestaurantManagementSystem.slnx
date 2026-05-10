@@ -1,7 +1,11 @@
 <Solution>
-  <Project Path="Restaurant.Application/Restaurant.Application.csproj" />
-  <Project Path="Restaurant.Domain/Restaurant.Domain.csproj" />
-  <Project Path="Restaurant.Infrastructure/Restaurant.Infrastructure.csproj" />
-  <Project Path="Restaurant.Mediator.Helper/Restaurant.Mediator.Helper.csproj" />
-  <Project Path="Restaurant.Web/Restaurant.Web.csproj" />
+  <Folder Name="/shared/">
+    <Project Path="shared/Restaurant.Mediator.Helper/Restaurant.Mediator.Helper.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Restaurant.Application/Restaurant.Application.csproj" />
+    <Project Path="src/Restaurant.Domain/Restaurant.Domain.csproj" />
+    <Project Path="src/Restaurant.Infrastructure/Restaurant.Infrastructure.csproj" />
+    <Project Path="src/Restaurant.Web/Restaurant.Web.csproj" />
+  </Folder>
 </Solution>
