@@ -39,3 +39,7 @@ TestResults/
 # ASP.NET Core
 appsettings.Development.json
 appsettings.Production.json
+
+# ASP.NET Core settings
+src/**/appsettings.Development.json
+src/**/appsettings.Production.json
