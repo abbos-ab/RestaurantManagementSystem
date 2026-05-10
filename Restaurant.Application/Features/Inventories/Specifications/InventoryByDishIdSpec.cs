@@ -5,7 +5,7 @@ namespace Restaurant.Application.Features.Inventories.Specifications;
 
 public sealed class InventoryByDishIdSpec : Specification<Inventory>
 {
-    public long DishId { get; }
+    public long DishId { get; set; }
 
     public InventoryByDishIdSpec(long dishId, bool asNoTracking = false)
     {

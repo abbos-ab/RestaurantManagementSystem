@@ -8,7 +8,7 @@ using Restaurant.Shared.Common.Models;
 namespace Restaurant.Web.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 public class CategoriesController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -27,9 +27,9 @@ public class CategoriesController : ControllerBase
             new GetAllCategories(paginationInfo), cancellationToken);
     }
 
-    [HttpGet("{categoryId}")]
+    [HttpGet]
     public async Task<CategoryDto?> GetById(
-        long categoryId,
+        [FromQuery] long categoryId,
         CancellationToken cancellationToken = default)
     {
         return await _mediator.Send(
@@ -46,9 +46,9 @@ public class CategoriesController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPut("{categoryId}")]
+    [HttpPut]
     public async Task<NoContentResult> Update(
-        long categoryId,
+        [FromQuery] long categoryId,
         [FromBody] CreateCategoryCommand request,
         CancellationToken cancellationToken = default)
     {
@@ -63,9 +63,9 @@ public class CategoriesController : ControllerBase
         return new NoContentResult();
     }
 
-    [HttpDelete("{categoryId}")]
+    [HttpDelete]
     public async Task<NoContentResult> Delete(
-        long categoryId,
+        [FromQuery] long categoryId,
         CancellationToken cancellationToken = default)
     {
         await _mediator.Send(
@@ -75,7 +75,7 @@ public class CategoriesController : ControllerBase
         return new NoContentResult();
     }
 
-    [HttpGet("search")]
+    [HttpGet]
     public async Task<List<CategoryDto>> GetByName(
         [FromQuery] string name,
         CancellationToken cancellationToken = default)

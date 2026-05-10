@@ -1,10 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Application;
-using Restaurant.Application.Features.Categories;
-using Restaurant.Application.Features.Dishes;
-using Restaurant.Application.Features.Dishes.Commands;
-using Restaurant.Application.Features.Inventories;
-using Restaurant.Application.Features.Orders;
 using Restaurant.Infrastructure.Persistence;
 using Restaurant.Infrastructure.Persistence.Repositories;
 

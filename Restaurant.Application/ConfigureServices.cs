@@ -1,6 +1,9 @@
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurant.Application.Common.Extensions;
+using Restaurant.Application.Features.Dishes.Queries;
+using Restaurant.Shared.Behaviors;
 
 namespace Restaurant.Application;
 
@@ -12,8 +15,16 @@ public static class ConfigureServices
 
         services.AddMappers();
 
-        services.AddMediatR(x => x.RegisterServicesFromAssembly(ApplicationRef.Assembly));
+        services.AddMediatR(cfg =>
+        {
+            cfg.RegisterServicesFromAssembly(ApplicationRef.Assembly);
+        });
 
+        services.AddValidatorsFromAssembly(ApplicationRef.Assembly);
+
+        services.AddTransient(typeof(IPipelineBehavior<,>),
+            typeof(ValidationBehavior<,>));
+        
         return services;
     }
 

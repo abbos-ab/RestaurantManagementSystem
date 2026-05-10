@@ -15,7 +15,7 @@ public sealed record CreateCategoryCommand(
 ) : ICommand<CategoryDto>;
 
 // ReSharper disable once UnusedType.Global
-internal class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCommand>
+public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCommand>
 {
     public CreateCategoryCommandValidator()
     {

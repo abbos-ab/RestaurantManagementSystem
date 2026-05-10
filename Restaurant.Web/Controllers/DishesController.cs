@@ -6,7 +6,7 @@ using Restaurant.Application.Features.Dishes.Queries;
 using Restaurant.Shared.Common.Models;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 public class DishesController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -21,13 +21,19 @@ public class DishesController : ControllerBase
         [FromQuery] PaginationInfo paginationInfo,
         CancellationToken cancellationToken = default)
     {
-        return await _mediator.Send(new GetAllDishes(paginationInfo), cancellationToken);
+        return await _mediator.Send(
+            new GetAllDishes(paginationInfo),
+            cancellationToken);
     }
 
     [HttpGet("{dishId}")]
-    public async Task<DishDto?> GetById(long dishId, CancellationToken cancellationToken = default)
+    public async Task<DishDto?> GetById(
+        long dishId, 
+        CancellationToken cancellationToken = default)
     {
-        return await _mediator.Send(new GetDishByIdQuery(dishId), cancellationToken);
+        return await _mediator.Send(
+            new GetDishById(dishId),
+            cancellationToken);
     }
 
     [HttpPost]

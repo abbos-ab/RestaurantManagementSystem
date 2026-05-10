@@ -9,7 +9,7 @@ namespace Restaurant.Application.Features.Categories.Queries;
 public sealed record GetCategoryById(long Id) : IQuery<CategoryDto?>;
 
 // ReSharper disable once UnusedType.Global
-internal class GetCategoryByIdValidator : AbstractValidator<GetCategoryById>
+public class GetCategoryByIdValidator : AbstractValidator<GetCategoryById>
 {
     public GetCategoryByIdValidator()
     {

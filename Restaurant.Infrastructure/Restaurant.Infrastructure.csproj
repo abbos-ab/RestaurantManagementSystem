@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Restaurant.Application\Restaurant.Application.csproj" />
-    <ProjectReference Include="..\Restaurant.Shared\Restaurant.Shared.csproj" />
+    <ProjectReference Include="..\Restaurant.Mediator.Helper\Restaurant.Mediator.Helper.csproj" />
   </ItemGroup>
 
   <ItemGroup>

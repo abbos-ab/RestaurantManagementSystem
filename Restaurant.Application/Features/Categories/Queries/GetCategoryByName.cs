@@ -10,6 +10,7 @@ namespace Restaurant.Application.Features.Categories.Queries;
 
 public sealed record GetCategoryByName(string Name) : IQuery<List<CategoryDto>>;
 
+// ReSharper disable once UnusedType.Global
 public sealed class GetCategoryByNameValidator : AbstractValidator<GetCategoryByName>
 {
     public GetCategoryByNameValidator()

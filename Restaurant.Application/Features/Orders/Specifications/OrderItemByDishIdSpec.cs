@@ -5,7 +5,7 @@ namespace Restaurant.Application.Features.Orders.Specifications;
 
 public class OrderItemByDishIdSpec : Specification<OrderItem>
 {
-    public long DishId { get; }
+    public long DishId { get; set; }
     
     public OrderItemByDishIdSpec(long dishId, bool asNoTracking = false)
     {

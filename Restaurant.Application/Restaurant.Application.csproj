@@ -2,14 +2,19 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Restaurant.Domain\Restaurant.Domain.csproj" />
-    <ProjectReference Include="..\Restaurant.Shared\Restaurant.Shared.csproj" />
+    <ProjectReference Include="..\Restaurant.Mediator.Helper\Restaurant.Mediator.Helper.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Ardalis.Specification" Version="9.3.1" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="MediatR" Version="14.1.0" />
     <PackageReference Include="Riok.Mapperly" Version="4.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Carts\Queries\" />
   </ItemGroup>
 
   <PropertyGroup>

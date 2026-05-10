@@ -36,8 +36,8 @@
               "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Domain\\Restaurant.Domain.csproj": {
                 "projectPath": "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Domain\\Restaurant.Domain.csproj"
               },
-              "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Shared\\Restaurant.Shared.csproj": {
-                "projectPath": "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Shared\\Restaurant.Shared.csproj"
+              "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Mediator.Helper\\Restaurant.Mediator.Helper.csproj": {
+                "projectPath": "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Mediator.Helper\\Restaurant.Mediator.Helper.csproj"
               }
             }
           }
@@ -63,6 +63,10 @@
               "version": "[9.3.1, )"
             },
             "FluentValidation": {
+              "target": "Package",
+              "version": "[12.1.1, )"
+            },
+            "FluentValidation.DependencyInjectionExtensions": {
               "target": "Package",
               "version": "[12.1.1, )"
             },
@@ -741,8 +745,8 @@
               "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Application\\Restaurant.Application.csproj": {
                 "projectPath": "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Application\\Restaurant.Application.csproj"
               },
-              "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Shared\\Restaurant.Shared.csproj": {
-                "projectPath": "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Shared\\Restaurant.Shared.csproj"
+              "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Mediator.Helper\\Restaurant.Mediator.Helper.csproj": {
+                "projectPath": "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Mediator.Helper\\Restaurant.Mediator.Helper.csproj"
               }
             }
           }
@@ -1082,14 +1086,14 @@
         }
       }
     },
-    "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Shared\\Restaurant.Shared.csproj": {
+    "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Mediator.Helper\\Restaurant.Mediator.Helper.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Shared\\Restaurant.Shared.csproj",
-        "projectName": "Restaurant.Shared",
-        "projectPath": "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Shared\\Restaurant.Shared.csproj",
+        "projectUniqueName": "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Mediator.Helper\\Restaurant.Mediator.Helper.csproj",
+        "projectName": "Restaurant.Mediator.Helper",
+        "projectPath": "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Mediator.Helper\\Restaurant.Mediator.Helper.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Shared\\obj\\",
+        "outputPath": "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Mediator.Helper\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1132,6 +1136,10 @@
             "Ardalis.Specification": {
               "target": "Package",
               "version": "[9.3.1, )"
+            },
+            "FluentValidation": {
+              "target": "Package",
+              "version": "[12.1.1, )"
             },
             "MediatR": {
               "target": "Package",
@@ -1471,8 +1479,8 @@
               "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Infrastructure\\Restaurant.Infrastructure.csproj": {
                 "projectPath": "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Infrastructure\\Restaurant.Infrastructure.csproj"
               },
-              "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Shared\\Restaurant.Shared.csproj": {
-                "projectPath": "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Shared\\Restaurant.Shared.csproj"
+              "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Mediator.Helper\\Restaurant.Mediator.Helper.csproj": {
+                "projectPath": "C:\\ItRun\\AbbosAbduqodirov\\RestaurantManagementSystem\\Restaurant.Mediator.Helper\\Restaurant.Mediator.Helper.csproj"
               }
             }
           }

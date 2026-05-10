@@ -13,7 +13,7 @@
           "Microsoft.EntityFrameworkCore.Design": "9.0.8",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "9.0.4",
           "Restaurant.Application": "1.0.0",
-          "Restaurant.Shared": "1.0.0"
+          "Restaurant.Mediator.Helper": "1.0.0"
         },
         "runtime": {
           "Restaurant.Infrastructure.dll": {}
@@ -43,6 +43,18 @@
       "FluentValidation/12.1.1": {
         "runtime": {
           "lib/net8.0/FluentValidation.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.1.1.0"
+          }
+        }
+      },
+      "FluentValidation.DependencyInjectionExtensions/12.1.1": {
+        "dependencies": {
+          "FluentValidation": "12.1.1",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.0"
+        },
+        "runtime": {
+          "lib/net8.0/FluentValidation.DependencyInjectionExtensions.dll": {
             "assemblyVersion": "12.0.0.0",
             "fileVersion": "12.1.1.0"
           }
@@ -683,9 +695,10 @@
         "dependencies": {
           "Ardalis.Specification": "9.3.1",
           "FluentValidation": "12.1.1",
+          "FluentValidation.DependencyInjectionExtensions": "12.1.1",
           "MediatR": "14.1.0",
           "Restaurant.Domain": "1.0.0",
-          "Restaurant.Shared": "1.0.0",
+          "Restaurant.Mediator.Helper": "1.0.0",
           "Riok.Mapperly": "4.3.1"
         },
         "runtime": {
@@ -703,14 +716,15 @@
           }
         }
       },
-      "Restaurant.Shared/1.0.0": {
+      "Restaurant.Mediator.Helper/1.0.0": {
         "dependencies": {
           "Ardalis.Specification": "9.3.1",
+          "FluentValidation": "12.1.1",
           "MediatR": "14.1.0",
           "MediatR.Contracts": "2.0.1"
         },
         "runtime": {
-          "Restaurant.Shared.dll": {
+          "Restaurant.Mediator.Helper.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -744,6 +758,13 @@
       "sha512": "sha512-EPpkIe1yh1a0OXyC100oOA8WMbZvqUu5plwhvYcb7oSELfyUZzfxV48BLhvs3kKo4NwG7MGLNgy1RJiYtT8Dpw==",
       "path": "fluentvalidation/12.1.1",
       "hashPath": "fluentvalidation.12.1.1.nupkg.sha512"
+    },
+    "FluentValidation.DependencyInjectionExtensions/12.1.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-D0VXh4dtjjX2aQizuaa0g6R8X3U1JaVqJPfGCvLwZX9t/O2h7tkpbitbadQMfwcgSPdDbI2vDxuwRMv/Uf9dHA==",
+      "path": "fluentvalidation.dependencyinjectionextensions/12.1.1",
+      "hashPath": "fluentvalidation.dependencyinjectionextensions.12.1.1.nupkg.sha512"
     },
     "Humanizer.Core/2.14.1": {
       "type": "package",
@@ -1028,7 +1049,7 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Restaurant.Shared/1.0.0": {
+    "Restaurant.Mediator.Helper/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

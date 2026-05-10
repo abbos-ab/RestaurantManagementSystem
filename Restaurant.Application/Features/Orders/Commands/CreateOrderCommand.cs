@@ -15,7 +15,7 @@ namespace Restaurant.Application.Features.Orders.Commands;
 
 public sealed record CreateOrderCommand(
     long TableId,
-    long WaiterId,
+    long? WaiterId,
     List<CreateOrderItemDto> Items
 ) : ICommand<OrderDto>;
 
@@ -28,9 +28,8 @@ public sealed class CreateOrderCommandValidator : AbstractValidator<CreateOrderC
             .GreaterThan(0)
             .WithMessage("Table id must be greater than 0");
 
-        RuleFor(x => x.WaiterId)
-            .GreaterThan(0)
-            .WithMessage("Waiter id must be greater than 0");
+        RuleForEach(x => x.Items)
+            .SetValidator(new CreateOrderItemDtoValidator());
     }
 }
 
@@ -80,7 +79,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
             {
                 DishId = dish.Id,
                 Quantity = item.Quantity,
-                Price = dish.Price,
+                Price = dish.Price * item.Quantity,
                 Status = OrderItemStatus.Pending
             };
 

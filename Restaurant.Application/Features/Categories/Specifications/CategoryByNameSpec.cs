@@ -5,7 +5,7 @@ namespace Restaurant.Application.Features.Categories.Specifications;
 
 public class CategoryByNameSpec : Specification<Category>
 {
-    public string CategoryName { get; }
+    public string CategoryName { get; set; }
 
     public CategoryByNameSpec(string categoryName, bool asNoTracking = false)
     {

@@ -5,11 +5,12 @@ namespace Restaurant.Application.Features.Orders.Specifications;
 
 public class OrderByTableIdSpec : Specification<Order>
 {
-    public long TableId { get; }
+    public long TableId { get; set; }
 
     public OrderByTableIdSpec(long tableId, bool asNoTracking = true)
     {
         TableId = tableId;
+        
         if (asNoTracking)
             Query.AsNoTracking();
 

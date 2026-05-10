@@ -24,19 +24,15 @@ public class OrdersController : ControllerBase
         [FromQuery] PaginationInfo pagination,
         CancellationToken cancellationToken = default)
     {
-        return await _mediator.Send(
-            new GetAllOrders(pagination),
-            cancellationToken);
+        return await _mediator.Send(new GetAllOrders(pagination), cancellationToken);
     }
 
-    [HttpGet("{id:long}")]
+    [HttpGet("{orderId:long}")]
     public async Task<ActionResult<OrderDto>> GetById(
-        long id,
+        long orderId,
         CancellationToken cancellationToken = default)
     {
-        var result = await _mediator.Send(
-            new GetOrderById(id),
-            cancellationToken);
+        var result = await _mediator.Send(new GetOrderById(orderId), cancellationToken);
 
         return Ok(result);
     }
@@ -52,22 +48,22 @@ public class OrdersController : ControllerBase
 
     [HttpPost]
     public async Task<ActionResult<bool>> CreateOrderItem(
-        [FromQuery]long orderId,
+        [FromQuery] long orderId,
         [FromBody] List<CreateOrderItemDto> items,
         CancellationToken cancellationToken = default)
     {
-        return await _mediator.Send(new CreateOrderItemsCommand(orderId, items), cancellationToken);
+        return await _mediator.Send(
+            new CreateOrderItemsCommand(orderId, items), cancellationToken);
     }
 
-    [HttpPut("{id:long}/status")]
+    [HttpPut("{orderId:long}/status")]
     public async Task<IActionResult> UpdateStatus(
-        long id,
+        long orderId,
         [FromQuery] OrderStatus status,
         CancellationToken cancellationToken = default)
     {
         await _mediator.Send(
-            new UpdateOrderStatusCommand(id, status),
-            cancellationToken);
+            new UpdateOrderStatusCommand(orderId, status), cancellationToken);
 
         return NoContent();
     }
@@ -79,21 +75,30 @@ public class OrdersController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         await _mediator.Send(
-            new UpdateOrderItemStatusCommand(itemId, status),
+            new UpdateOrderItemStatusCommand(itemId, status), cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete(
+        DeleteOrderRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        await _mediator.Send(
+            new DeleteOrderCommand(request.TableId, request.OrderId),
             cancellationToken);
 
         return NoContent();
     }
 
-    [HttpDelete("{id:long}")]
+    [HttpDelete("items/")]
     public async Task<IActionResult> Delete(
-        long id,
+        long orderId,
+        List<long> items,
         CancellationToken cancellationToken = default)
     {
-        await _mediator.Send(
-            new DeleteOrderCommand(id),
-            cancellationToken);
-
+        await _mediator.Send(new DeleteOrderItemsCommand(orderId, items), cancellationToken);
         return NoContent();
     }
 
@@ -102,8 +107,6 @@ public class OrdersController : ControllerBase
         [FromQuery] OrderStatus status,
         CancellationToken cancellationToken = default)
     {
-        return await _mediator.Send(
-            new GetOrdersByStatusQuery(status),
-            cancellationToken);
+        return await _mediator.Send(new GetOrdersByStatus(status), cancellationToken);
     }
 }

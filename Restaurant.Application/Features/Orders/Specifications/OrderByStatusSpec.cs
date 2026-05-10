@@ -5,7 +5,7 @@ namespace Restaurant.Application.Features.Orders.Specifications;
 
 public sealed class OrderByStatusSpec : Specification<Order>
 {
-    public OrderStatus Status  { get; }
+    public OrderStatus Status  { get; set; }
     
     public OrderByStatusSpec(OrderStatus status, bool asNoTracking = false)
     {

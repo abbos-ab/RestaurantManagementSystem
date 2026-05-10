@@ -17,20 +17,20 @@ public sealed record CreateOrderItemsCommand(long OrderId, List<CreateOrderItemD
     : ICommand<bool>;
 
 // ReSharper disable once UnusedType.Global
-public class CreateOrderItemCommandValidator : AbstractValidator<CreateOrderItemsCommand>
+public sealed class CreateOrderItemCommandValidator : AbstractValidator<CreateOrderItemsCommand>
 {
     public CreateOrderItemCommandValidator()
     {
         RuleFor(x => x.OrderId)
             .GreaterThan(0)
             .WithMessage("OrderId must be greater than 0");
-
-        RuleFor(x => x.Items)
-            .NotNull();
+        
+        RuleForEach(x => x.Items)
+            .SetValidator(new CreateOrderItemDtoValidator());
     }
 }
 
-public class CreateOrderItemCommandHandler : ICommandHandler<CreateOrderItemsCommand, bool>
+internal sealed class CreateOrderItemCommandHandler : ICommandHandler<CreateOrderItemsCommand, bool>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IOrderItemRepository _orderItemRepository;
@@ -60,13 +60,23 @@ public class CreateOrderItemCommandHandler : ICommandHandler<CreateOrderItemsCom
 
         foreach (var item in request.Items)
         {
-            var orderItemByDishIdSpec = new OrderItemByOrderIdAndDishIdSpec(request.OrderId, item.DishId);
-            var orderItem = await _orderItemRepository.FirstOrDefaultAsync(orderItemByDishIdSpec, cancellationToken);
-
             var dish = await _dishRepository.GetByIdAsync(item.DishId, cancellationToken);
 
             if (dish is null)
                 throw new BusinessLogicException(DishErrors.NotFound);
+            
+            var inventoryByDishIdSpec = new InventoryByDishIdSpec(item.DishId);
+            var dishInventory =
+                await _inventoryRepository.FirstOrDefaultAsync(inventoryByDishIdSpec, cancellationToken);
+
+            if (dishInventory is null)
+                throw new BusinessLogicException(InventoryErrors.NotFound);
+
+            if (dishInventory.Quantity < item.Quantity)
+                throw new ResourceNotFoundException(InventoryErrors.OutOfStock);
+            
+            var orderItemByDishIdSpec = new OrderItemByOrderIdAndDishIdSpec(request.OrderId, item.DishId);
+            var orderItem = await _orderItemRepository.FirstOrDefaultAsync(orderItemByDishIdSpec, cancellationToken);
 
             if (orderItem is null)
             {
@@ -81,16 +91,6 @@ public class CreateOrderItemCommandHandler : ICommandHandler<CreateOrderItemsCom
 
                 total += item.Quantity * dish.Price;
 
-                var inventoryByDishIdSpec = new InventoryByDishIdSpec(item.DishId);
-                var dishInventory =
-                    await _inventoryRepository.FirstOrDefaultAsync(inventoryByDishIdSpec, cancellationToken);
-
-                if (dishInventory is null)
-                    throw new BusinessLogicException(InventoryErrors.NotFound);
-
-                if (dishInventory.Quantity < item.Quantity)
-                    throw new ResourceNotFoundException(InventoryErrors.OutOfStock);
-
                 dishInventory.Quantity -= item.Quantity;
                 await _orderItemRepository.AddAsync(newOrderItem, cancellationToken);
             }
@@ -101,16 +101,6 @@ public class CreateOrderItemCommandHandler : ICommandHandler<CreateOrderItemsCom
                 orderItem.Status = OrderItemStatus.Pending;
 
                 total += item.Quantity * dish.Price;
-
-                var inventoryByDishIdSpec = new InventoryByDishIdSpec(item.DishId);
-                var dishInventory =
-                    await _inventoryRepository.FirstOrDefaultAsync(inventoryByDishIdSpec, cancellationToken);
-
-                if (dishInventory is null)
-                    throw new BusinessLogicException(InventoryErrors.NotFound);
-
-                if (dishInventory.Quantity < item.Quantity)
-                    throw new ResourceNotFoundException(InventoryErrors.OutOfStock);
 
                 dishInventory.Quantity -= item.Quantity;
                 await _orderItemRepository.UpdateAsync(orderItem, cancellationToken);

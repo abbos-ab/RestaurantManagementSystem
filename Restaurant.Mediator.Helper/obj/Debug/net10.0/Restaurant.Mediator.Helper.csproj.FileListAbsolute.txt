@@ -1,0 +1,13 @@
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Mediator.Helper\bin\Debug\net10.0\Restaurant.Mediator.Helper.deps.json
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Mediator.Helper\bin\Debug\net10.0\Restaurant.Mediator.Helper.dll
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Mediator.Helper\bin\Debug\net10.0\Restaurant.Mediator.Helper.pdb
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Mediator.Helper\obj\Debug\net10.0\Restaurant.Mediator.Helper.csproj.AssemblyReference.cache
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Mediator.Helper\obj\Debug\net10.0\Restaurant.Mediator.Helper.GeneratedMSBuildEditorConfig.editorconfig
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Mediator.Helper\obj\Debug\net10.0\Restaurant.Mediator.Helper.AssemblyInfoInputs.cache
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Mediator.Helper\obj\Debug\net10.0\Restaurant.Mediator.Helper.AssemblyInfo.cs
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Mediator.Helper\obj\Debug\net10.0\Restaurant.Mediator.Helper.csproj.CoreCompileInputs.cache
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Mediator.Helper\obj\Debug\net10.0\Restaurant.Mediator.Helper.sourcelink.json
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Mediator.Helper\obj\Debug\net10.0\Restaurant.Mediator.Helper.dll
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Mediator.Helper\obj\Debug\net10.0\refint\Restaurant.Mediator.Helper.dll
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Mediator.Helper\obj\Debug\net10.0\Restaurant.Mediator.Helper.pdb
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Mediator.Helper\obj\Debug\net10.0\ref\Restaurant.Mediator.Helper.dll

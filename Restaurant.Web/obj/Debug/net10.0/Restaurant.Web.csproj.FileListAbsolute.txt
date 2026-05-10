@@ -138,6 +138,7 @@ C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Web\bin\Debug\ne
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Web\bin\Debug\net10.0\Ardalis.Specification.dll
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Web\bin\Debug\net10.0\Ardalis.Specification.EntityFrameworkCore.dll
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Web\bin\Debug\net10.0\Riok.Mapperly.Abstractions.dll
-C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Web\bin\Debug\net10.0\Restaurant.Shared.dll
-C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Web\bin\Debug\net10.0\Restaurant.Shared.pdb
 C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Web\obj\Debug\net10.0\Restaurant.Web.sourcelink.json
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Web\bin\Debug\net10.0\Restaurant.Mediator.Helper.dll
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Web\bin\Debug\net10.0\Restaurant.Mediator.Helper.pdb
+C:\ItRun\AbbosAbduqodirov\RestaurantManagementSystem\Restaurant.Web\bin\Debug\net10.0\FluentValidation.DependencyInjectionExtensions.dll
