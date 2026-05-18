@@ -1,11 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 
-namespace Restaurant.Shared.Behaviors;
+namespace Restaurant.Mediator.Helper.Behaviors;
 
 /// <summary>
 /// Промежуточный обработчик пайплайна для валидации запросов через MediatR.
