@@ -1,9 +1,9 @@
 using FluentValidation;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Domain.Entities;
+using Restaurant.Mediator.Helper.Common.Extensions;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
-using Restaurant.Mediator.Helper.Extensions;
 
 namespace Restaurant.Application.Features.Orders.Commands;
 

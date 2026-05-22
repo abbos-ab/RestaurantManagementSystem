@@ -7,11 +7,12 @@ using Restaurant.Mediator.Helper.Exceptions;
 
 namespace Restaurant.Application.Features.Waiters.Commands;
 
-public sealed record CancelOrderCommand(long OrderId, long WaiterId) : ICommand<bool>;
+public sealed record RejectOrderCommand(long OrderId, long WaiterId) : ICommand<bool>;
 
-public sealed class CancelOrderCommandValidator : AbstractValidator<CancelOrderCommand>
+// ReSharper disable once UnusedType.Global
+public sealed class RejectOrderCommandValidator : AbstractValidator<RejectOrderCommand>
 {
-    public CancelOrderCommandValidator()
+    public RejectOrderCommandValidator()
     {
         RuleFor(x => x.OrderId)
             .GreaterThan(0)
@@ -23,18 +24,18 @@ public sealed class CancelOrderCommandValidator : AbstractValidator<CancelOrderC
     }
 }
 
-internal sealed class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, bool>
+internal sealed class RejectOrderCommandHandler : ICommandHandler<RejectOrderCommand, bool>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IUserRepository _userRepository;
 
-    public CancelOrderCommandHandler(IOrderRepository orderRepository, IUserRepository userRepository)
+    public RejectOrderCommandHandler(IOrderRepository orderRepository, IUserRepository userRepository)
     {
         _orderRepository = orderRepository;
         _userRepository = userRepository;
     }
 
-    public async Task<bool> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(RejectOrderCommand request, CancellationToken cancellationToken)
     {
         var waiter = await _userRepository.GetByIdAsync(request.WaiterId, cancellationToken);
         if (waiter is null || waiter.IsActive == false)

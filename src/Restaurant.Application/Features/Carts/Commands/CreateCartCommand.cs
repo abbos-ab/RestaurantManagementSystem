@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using FluentValidation;
 using Restaurant.Application.Features.Carts.Models;
 using Restaurant.Application.Features.Carts.Repositories;
@@ -12,9 +8,9 @@ using Restaurant.Application.Features.Inventories;
 using Restaurant.Application.Features.Inventories.Repositories;
 using Restaurant.Application.Features.Inventories.Specifications;
 using Restaurant.Domain.Entities;
+using Restaurant.Mediator.Helper.Common.Extensions;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
-using Restaurant.Mediator.Helper.Extensions;
 
 namespace Restaurant.Application.Features.Carts.Commands;
 

@@ -12,7 +12,7 @@ public class OrderItem : BaseEntity
     public long? ChefId { get; set; }
     public User? Chef { get; set; }
 
-    public long Quantity { get; set; }
+    public int Quantity { get; set; }
 
     public decimal Price { get; set; }
 

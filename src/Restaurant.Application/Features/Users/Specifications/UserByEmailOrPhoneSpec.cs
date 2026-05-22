@@ -3,17 +3,19 @@ using Restaurant.Domain.Entities;
 
 namespace Restaurant.Application.Features.Users.Specifications;
 
-public class UserByEmailSpec : Specification<User>
+public class UserByEmailOrPhoneSpec : Specification<User>
 {
     public string Email { get; set; }
+    public string PhoneNumber { get; set; }
 
-    public UserByEmailSpec(string email, bool asNoTracking = true)
+    public UserByEmailOrPhoneSpec(string email,string phoneNumber ,bool asNoTracking = true)
     {
         Email = email;
+        PhoneNumber = phoneNumber;
 
         if (asNoTracking)
             Query.AsNoTracking();
 
-        Query.Where(u => u.Email == email);
+        Query.Where(u => u.Email == email || u.PhoneNumber == phoneNumber);
     }
 }

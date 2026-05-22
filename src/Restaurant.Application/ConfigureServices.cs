@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurant.Application.Common.Extensions;
 using Restaurant.Application.Features.Dishes.Queries;
-using Restaurant.Shared.Behaviors;
+using Restaurant.Mediator.Helper.Behaviors;
 
 namespace Restaurant.Application;
 
@@ -27,5 +27,4 @@ public static class ConfigureServices
         
         return services;
     }
-
 }

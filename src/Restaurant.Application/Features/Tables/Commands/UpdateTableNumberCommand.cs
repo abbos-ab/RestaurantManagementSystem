@@ -6,15 +6,15 @@ using Restaurant.Mediator.Helper.Exceptions;
 
 namespace Restaurant.Application.Features.Tables.Commands;
 
-public sealed record UpdateTableCommand(
+public sealed record UpdateTableNumberCommand(
     long TableId,
     int Number
 ) : ICommand<TableDto>;
 
 // ReSharper disable once UnusedType.Global
-public sealed class UpdateTableCommandValidator : AbstractValidator<UpdateTableCommand>
+public sealed class UpdateTableNumberCommandValidator : AbstractValidator<UpdateTableNumberCommand>
 {
-    public UpdateTableCommandValidator()
+    public UpdateTableNumberCommandValidator()
     {
         RuleFor(x => x.TableId)
             .GreaterThan(0)
@@ -26,12 +26,12 @@ public sealed class UpdateTableCommandValidator : AbstractValidator<UpdateTableC
     }
 }
 
-internal sealed class UpdateTableCommandHandler : ICommandHandler<UpdateTableCommand, TableDto>
+internal sealed class UpdateTableNumberCommandHandler : ICommandHandler<UpdateTableNumberCommand, TableDto>
 {
     private readonly ITableRepository _tableRepository;
     private readonly TableMapper _tableMapper;
 
-    public UpdateTableCommandHandler(
+    public UpdateTableNumberCommandHandler(
         ITableRepository tableRepository,
         TableMapper tableMapper)
     {
@@ -39,7 +39,7 @@ internal sealed class UpdateTableCommandHandler : ICommandHandler<UpdateTableCom
         _tableMapper = tableMapper;
     }
 
-    public async Task<TableDto> Handle(UpdateTableCommand request, CancellationToken cancellationToken)
+    public async Task<TableDto> Handle(UpdateTableNumberCommand request, CancellationToken cancellationToken)
     {
         var entity = await _tableRepository.GetByIdAsync(request.TableId, cancellationToken);
 

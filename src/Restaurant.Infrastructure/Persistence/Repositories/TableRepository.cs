@@ -1,6 +1,7 @@
+using Ardalis.Specification.EntityFrameworkCore;
+using Restaurant.Application.Features.Tables.Repositories;
+using Restaurant.Domain.Entities;
+
 namespace Restaurant.Infrastructure.Persistence.Repositories;
 
-public class TableRepository
-{
-    
-}
+internal sealed class TableRepository(AppDbContext dbContext) : RepositoryBase<Table>(dbContext), ITableRepository;

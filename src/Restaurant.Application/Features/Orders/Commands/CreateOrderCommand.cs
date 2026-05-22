@@ -6,16 +6,17 @@ using Restaurant.Application.Features.Inventories.Repositories;
 using Restaurant.Application.Features.Inventories.Specifications;
 using Restaurant.Application.Features.Orders.Models;
 using Restaurant.Application.Features.Orders.Repositories;
+using Restaurant.Application.Features.Tables;
+using Restaurant.Application.Features.Tables.Repositories;
 using Restaurant.Domain.Entities;
+using Restaurant.Mediator.Helper.Common.Extensions;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
-using Restaurant.Mediator.Helper.Extensions;
 
 namespace Restaurant.Application.Features.Orders.Commands;
 
 public sealed record CreateOrderCommand(
     long TableId,
-    long? WaiterId,
     List<CreateOrderItemDto> Items
 ) : ICommand<OrderDto>;
 
@@ -36,8 +37,10 @@ public sealed class CreateOrderCommandValidator : AbstractValidator<CreateOrderC
 internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, OrderDto>
 {
     private readonly IOrderRepository _orderRepository;
+    private readonly IOrderItemRepository _orderItemRepository;
     private readonly IDishRepository _dishRepository;
     private readonly IInventoryRepository _inventoryRepository;
+    private readonly ITableRepository _tableRepository;
     private readonly TimeProvider _timeProvider;
     private readonly OrderMapper _mapper;
 
@@ -45,21 +48,46 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
         IOrderRepository orderRepository,
         IDishRepository dishRepository,
         IInventoryRepository inventoryRepository,
-        TimeProvider timeProvider, OrderMapper mapper)
+        TimeProvider timeProvider, OrderMapper mapper,
+        ITableRepository tableRepository, 
+        IOrderItemRepository orderItemRepository)
     {
         _orderRepository = orderRepository;
         _dishRepository = dishRepository;
         _timeProvider = timeProvider;
         _mapper = mapper;
+        _tableRepository = tableRepository;
+        _orderItemRepository = orderItemRepository;
         _inventoryRepository = inventoryRepository;
     }
 
     public async Task<OrderDto> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
+        var table = await _tableRepository.GetByIdAsync(request.TableId, cancellationToken);
+        if (table is null)
+            throw new BusinessLogicException(TableErrors.NotFound);
+
+        if (table.Status is not TableStatus.Available)
+        {
+            switch (table.Status)
+            {
+                case TableStatus.Disabled:
+                    throw new ResourceNotFoundException(TableErrors.TableDisabled);
+                    break;
+
+                case TableStatus.Occupied:
+                    throw new ResourceNotFoundException(TableErrors.TableOccupied);
+                    break;
+
+                case TableStatus.Reserved:
+                    throw new ResourceNotFoundException(TableErrors.TableReserved);
+                    break;
+            }
+        }
+
         var order = new Order
         {
             TableId = request.TableId,
-            WaiterId = request.WaiterId,
             Status = OrderStatus.Created,
             CreatedAt = _timeProvider.GetLocalDateTimeNowKindUtc(),
         };
@@ -67,7 +95,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
         await _orderRepository.AddAsync(order, cancellationToken);
 
         decimal total = 0;
-
+        List<OrderItem> orderItems = new List<OrderItem>();
         foreach (var item in request.Items)
         {
             var dish = await _dishRepository.GetByIdAsync(item.DishId, cancellationToken);
@@ -77,6 +105,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
 
             var orderItem = new OrderItem
             {
+                OrderId = order.Id,
                 DishId = dish.Id,
                 Quantity = item.Quantity,
                 Price = dish.Price * item.Quantity,
@@ -94,12 +123,14 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
             if (dishInventory.Quantity < item.Quantity)
                 throw new ResourceNotFoundException(InventoryErrors.OutOfStock);
 
-            order.OrderItems.Add(orderItem);
+            orderItems.Add(orderItem);
 
             dishInventory.Quantity -= item.Quantity;
             await _inventoryRepository.SaveChangesAsync(cancellationToken);
         }
 
+        await _orderItemRepository.AddRangeAsync(orderItems, cancellationToken);
+        
         order.TotalPrice += total;
         await _orderRepository.SaveChangesAsync(cancellationToken);
 

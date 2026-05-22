@@ -6,9 +6,9 @@ public sealed class OrderHistoryDto
 
     public long OrderId { get; set; }
 
-    public string Action { get; set; }
+    public string Action { get; set; } = string.Empty;
 
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     public long? UserId { get; set; }
 

@@ -5,9 +5,9 @@ using Restaurant.Application.Features.Inventories.Models;
 using Restaurant.Application.Features.Inventories.Repositories;
 using Restaurant.Application.Features.Inventories.Specifications;
 using Restaurant.Domain.Entities;
+using Restaurant.Mediator.Helper.Common.Extensions;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
-using Restaurant.Mediator.Helper.Extensions;
 
 namespace Restaurant.Application.Features.Inventories.Commands;
 

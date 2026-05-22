@@ -1,11 +1,12 @@
 using FluentValidation;
 using Restaurant.Application.Features.Orders.Repositories;
+using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
 
 namespace Restaurant.Application.Features.Orders.Commands;
 
-public sealed record DeleteOrderItemsCommand(long OrderId, List<long> OrderItems) : ICommand<bool>;
+public sealed record DeleteOrderItemsCommand(long OrderId, List<long> OrderItemsIds) : ICommand<bool>;
 
 // ReSharper disable once UnusedType.Global
 public sealed class DeleteOrderItemsCommandValidator : AbstractValidator<DeleteOrderItemsCommand>
@@ -16,7 +17,7 @@ public sealed class DeleteOrderItemsCommandValidator : AbstractValidator<DeleteO
             .GreaterThan(0)
             .WithMessage("Order Id must be greater than 0");
 
-        RuleForEach(x => x.OrderItems)
+        RuleForEach(x => x.OrderItemsIds)
             .NotEmpty()
             .WithMessage("Order Items must not be empty");
     }
@@ -36,19 +37,24 @@ internal class DeleteOrderItemsCommandHandler : ICommandHandler<DeleteOrderItems
     public async Task<bool> Handle(DeleteOrderItemsCommand request, CancellationToken cancellationToken)
     {
         var order = await _orderRepository.GetByIdAsync(request.OrderId, cancellationToken);
-
         if (order is null)
             throw new BusinessLogicException(OrderErrors.NotFound);
 
-        foreach (var item in request.OrderItems)
+        List<OrderItem> orderItems = new List<OrderItem>();
+
+        foreach (var item in request.OrderItemsIds)
         {
             var orderItem = await _orderItemRepository.GetByIdAsync(item, cancellationToken);
-
             if (orderItem is null)
                 throw new BusinessLogicException(OrderItemErrors.NotFound);
 
-            await _orderItemRepository.DeleteAsync(orderItem, cancellationToken);
+            if (orderItem.Status != OrderItemStatus.Preparing && orderItem.Status != OrderItemStatus.Pending)
+                throw new BusinessLogicException(OrderItemErrors.OrderCompleted);
+
+            orderItems.Add(orderItem);
         }
+
+        await _orderItemRepository.DeleteRangeAsync(orderItems, cancellationToken);
 
         await _orderItemRepository.SaveChangesAsync(cancellationToken);
         return true;

@@ -26,12 +26,12 @@ public class InventoriesController : ControllerBase
         return await _mediator.Send(new GetAllInventories(paginationInfo), cancellationToken);
     }
 
-    [HttpGet]
+    [HttpGet("{inventoryId:long}")]
     public async Task<InventoryDto?> GetById(
-        [FromQuery] long id,
+        long inventoryId,
         CancellationToken cancellationToken = default)
     {
-        return await _mediator.Send(new GetInventoryById(id), cancellationToken);
+        return await _mediator.Send(new GetInventoryById(inventoryId), cancellationToken);
     }
 
     [HttpPost]
@@ -42,23 +42,23 @@ public class InventoriesController : ControllerBase
         return await _mediator.Send(command, cancellationToken);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{inventoryId:long}")]
     public async Task<InventoryDto> Update(
-        long id,
+        long inventoryId,
         int quantity,
         CancellationToken cancellationToken = default)
     {
         return await _mediator.Send(
-            new UpdateInventoryCommand(id, quantity),
+            new UpdateInventoryCommand(inventoryId, quantity),
             cancellationToken);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{inventoryId:long}")]
     public async Task<IActionResult> Delete(
-        long id, 
+        long inventoryId, 
         CancellationToken cancellationToken = default)
     {
-        await _mediator.Send(new DeleteInventoryCommand(id), cancellationToken);
+        await _mediator.Send(new DeleteInventoryCommand(inventoryId), cancellationToken);
         return NoContent();
     }
 }

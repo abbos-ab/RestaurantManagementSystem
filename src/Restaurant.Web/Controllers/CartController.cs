@@ -11,19 +11,18 @@ public class CartController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public CartController(IMediator mediator)
+    public CartController(IMediator mediator) 
     {
         _mediator = mediator;
     }
 
     [HttpPost]
     public async Task<CartDto> CreateCart(
-        [FromQuery] long tableId,
-        [FromBody] List<CreateCartItemDto> cartItems,
+        CreateCartCommand request,
         CancellationToken cancellationToken = default)
     {
         return await _mediator.Send(
-            new CreateCartCommand(tableId, cartItems),
+            new CreateCartCommand(request.TableId, request.Items),
             cancellationToken);
     }
 
@@ -35,6 +34,17 @@ public class CartController : ControllerBase
     {
         return await _mediator.Send(
             new CreateCartItemCommand(caerId, items),
+            cancellationToken);
+    }
+
+    [HttpPut]
+    public async Task<CartItemDto> UpdateCartItem(
+        [FromQuery] long cartId,
+        [FromBody] CreateCartItemDto item,
+        CancellationToken cancellationToken = default)
+    {
+        return await _mediator.Send(
+            new UpdateCartItemCommand(cartId, item),
             cancellationToken);
     }
 }

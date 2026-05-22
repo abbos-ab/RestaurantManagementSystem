@@ -2,6 +2,7 @@ using FluentValidation;
 using Restaurant.Application.Features.Inventories.Models;
 using Restaurant.Application.Features.Inventories.Repositories;
 using Restaurant.Mediator.Helper.CQRS.Queries;
+using Restaurant.Mediator.Helper.Exceptions;
 
 namespace Restaurant.Application.Features.Inventories.Queries;
 
@@ -32,7 +33,7 @@ internal sealed class GetInventoryByIdHandler : IQueryHandler<GetInventoryById, 
         var inventory = await _inventoryRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (inventory is null)
-            return null;
+            throw new BusinessLogicException(InventoryErrors.NotFound);
 
         return new InventoryDto
         {

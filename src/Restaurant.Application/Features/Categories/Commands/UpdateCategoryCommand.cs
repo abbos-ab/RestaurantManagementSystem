@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Restaurant.Application.Features.Categories.Models;
 using Restaurant.Application.Features.Categories.Repositories;
+using Restaurant.Mediator.Helper.Common.Extensions;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
-using Restaurant.Mediator.Helper.Extensions;
 
 namespace Restaurant.Application.Features.Categories.Commands;
 

@@ -1,9 +1,13 @@
 using Microsoft.Extensions.DependencyInjection;
+using Restaurant.Application.Features.Authentications.Interfaces;
 using Restaurant.Application.Features.Carts.Repositories;
 using Restaurant.Application.Features.Categories.Repositories;
 using Restaurant.Application.Features.Dishes.Repositories;
 using Restaurant.Application.Features.Inventories.Repositories;
+using Restaurant.Application.Features.OrderHistories.Repositories;
 using Restaurant.Application.Features.Orders.Repositories;
+using Restaurant.Application.Features.Tables.Repositories;
+using Restaurant.Application.Features.Users.Repositories;
 
 namespace Restaurant.Infrastructure.Persistence.Repositories;
 
@@ -18,6 +22,10 @@ public static class ConfigureServices
         services.AddScoped<IOrderItemRepository, OrderItemRepository>();
         services.AddScoped<ICartItemRepository, CartItemRepository>();
         services.AddScoped<ICartRepository, CartRepository>();
+        services.AddScoped<IOrderHistoryRepository, OrderHistoryRepository>();
+        services.AddScoped<ITableRepository, TableRepository>();    
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
         return services;
     }

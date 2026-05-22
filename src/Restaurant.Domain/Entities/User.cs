@@ -13,6 +13,8 @@ public class User : BaseEntity
     public UserRole Role { get; set; }
 
     public string PasswordHash { get; set; }
+
+    public bool IsActive { get; set; }
 }
 
 public enum UserRole

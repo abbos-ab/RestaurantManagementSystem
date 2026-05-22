@@ -26,7 +26,7 @@ public class DishesController : ControllerBase
             cancellationToken);
     }
 
-    [HttpGet("{dishId}")]
+    [HttpGet("{dishId:long}")]
     public async Task<DishDto?> GetById(
         long dishId, 
         CancellationToken cancellationToken = default)
@@ -43,7 +43,7 @@ public class DishesController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPut("{dishId}")]
+    [HttpPut("{dishId:long}")]
     public async Task<NoContentResult> Update(
         long dishId,
         [FromBody] CreateDishCommand request,
@@ -63,7 +63,16 @@ public class DishesController : ControllerBase
         return new NoContentResult();
     }
 
-    [HttpDelete("{dishId}")]
+    [HttpPut("{dishId:long}")]
+    public async Task<ActionResult<DishDto>> UpdatePrice(
+        long dishId,
+        decimal price,
+        CancellationToken cancellationToken = default)
+    {
+        return Ok(await _mediator.Send(new UpdateDishPriceCommand(dishId, price), cancellationToken));
+    }
+    
+    [HttpDelete("{dishId:long}")]
     public async Task<NoContentResult> Delete(long dishId)
     {
         await _mediator.Send(new DeleteDishCommand(dishId));

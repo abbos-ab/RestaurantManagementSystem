@@ -2,29 +2,29 @@ using Ardalis.Specification;
 using Restaurant.Application.Features.OrderHistories.Models;
 using Restaurant.Application.Features.OrderHistories.Repositories;
 using Restaurant.Domain.Entities;
+using Restaurant.Mediator.Helper.Common.Extensions;
 using Restaurant.Mediator.Helper.Common.Models;
 using Restaurant.Mediator.Helper.CQRS.Queries;
-using Restaurant.Mediator.Helper.Extensions;
 using Restaurant.Mediator.Helper.Persistence;
 
 namespace Restaurant.Application.Features.OrderHistories.Queries;
 
-public sealed record GetAllOrderHistoriesQuery(PaginationInfo PaginationInfo)
+public sealed record GetAllOrderHistories(PaginationInfo PaginationInfo)
     : IQuery<PaginatedResult<OrderHistoryDto>>;
 
-internal sealed class GetAllOrderHistoriesQueryHandler
-    : IQueryHandler<GetAllOrderHistoriesQuery, PaginatedResult<OrderHistoryDto>>
+internal sealed class GetAllOrderHistoriesHandler
+    : IQueryHandler<GetAllOrderHistories, PaginatedResult<OrderHistoryDto>>
 {
     private readonly IOrderHistoryRepository _historyRepository;
     private readonly OrderHistoryMapper _historyMapper;
 
-    public GetAllOrderHistoriesQueryHandler(IOrderHistoryRepository historyRepository, OrderHistoryMapper historyMapper)
+    public GetAllOrderHistoriesHandler(IOrderHistoryRepository historyRepository, OrderHistoryMapper historyMapper)
     {
         _historyRepository = historyRepository;
         _historyMapper = historyMapper;
     }
 
-    public async Task<PaginatedResult<OrderHistoryDto>> Handle(GetAllOrderHistoriesQuery request,
+    public async Task<PaginatedResult<OrderHistoryDto>> Handle(GetAllOrderHistories request,
         CancellationToken cancellationToken)
     {
         var spec = new ReadOnlySpecification<OrderHistory>();

@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using FluentValidation;
 using Restaurant.Application.Features.Carts.Repositories;
 using Restaurant.Application.Features.Carts.Specifications;

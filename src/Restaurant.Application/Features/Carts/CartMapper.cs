@@ -10,4 +10,6 @@ public partial class CartMapper
 {
     public partial CartDto Map(Cart cart);
     public partial List<CartDto> Map(List<Cart> carts);
+
+    public partial CartItemDto Map(CartItem cartItem);
 }

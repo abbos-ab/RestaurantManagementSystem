@@ -56,6 +56,16 @@ public class OrdersController : ControllerBase
             new CreateOrderItemsCommand(orderId, items), cancellationToken);
     }
 
+    [HttpPut]
+        public async Task<ActionResult<OrderItemDto>> UpdateOrderItem(
+        long itemId,
+        [FromBody] UpdateOrderItemCommand command,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await _mediator.Send(command, cancellationToken);
+        return Ok(result);
+    }
+
     [HttpPut("{orderId:long}/status")]
     public async Task<IActionResult> UpdateStatus(
         long orderId,
@@ -102,7 +112,7 @@ public class OrdersController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet("by-status")]
+    [HttpGet]
     public async Task<List<OrderDto>> GetByStatus(
         [FromQuery] OrderStatus status,
         CancellationToken cancellationToken = default)

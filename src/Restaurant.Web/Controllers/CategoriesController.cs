@@ -27,9 +27,9 @@ public class CategoriesController : ControllerBase
             new GetAllCategories(paginationInfo), cancellationToken);
     }
 
-    [HttpGet]
+    [HttpGet("{categoryId:long}")]
     public async Task<CategoryDto?> GetById(
-        [FromQuery] long categoryId,
+        long categoryId,
         CancellationToken cancellationToken = default)
     {
         return await _mediator.Send(
@@ -46,9 +46,9 @@ public class CategoriesController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPut]
+    [HttpPut("{categoryId:long}")]
     public async Task<NoContentResult> Update(
-        [FromQuery] long categoryId,
+        long categoryId,
         [FromBody] CreateCategoryCommand request,
         CancellationToken cancellationToken = default)
     {
@@ -63,9 +63,9 @@ public class CategoriesController : ControllerBase
         return new NoContentResult();
     }
 
-    [HttpDelete]
+    [HttpDelete("{categoryId:long}")]
     public async Task<NoContentResult> Delete(
-        [FromQuery] long categoryId,
+        long categoryId,
         CancellationToken cancellationToken = default)
     {
         await _mediator.Send(

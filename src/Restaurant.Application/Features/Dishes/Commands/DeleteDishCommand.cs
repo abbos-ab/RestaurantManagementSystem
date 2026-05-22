@@ -33,7 +33,8 @@ internal sealed class DeleteDishCommandHandler : ICommandHandler<DeleteDishComma
         if (dish is null)
             throw new BusinessLogicException(DishErrors.NotFound);
 
-        await _dishRepository.DeleteAsync(dish, cancellationToken);
+        dish.IsActive = false;
+        await _dishRepository.UpdateAsync(dish, cancellationToken);
 
         return true;
     }
