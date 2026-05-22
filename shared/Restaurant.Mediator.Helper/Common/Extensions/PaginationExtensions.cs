@@ -1,7 +1,7 @@
 using Ardalis.Specification;
 using Restaurant.Mediator.Helper.Common.Models;
 
-namespace Restaurant.Mediator.Helper.Extensions;
+namespace Restaurant.Mediator.Helper.Common.Extensions;
 
 public static class PaginationExtensions
 {

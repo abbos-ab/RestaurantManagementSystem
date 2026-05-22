@@ -1,6 +1,6 @@
 using System;
 
-namespace Restaurant.Mediator.Helper.Extensions;
+namespace Restaurant.Mediator.Helper.Common.Extensions;
 
 public static class DateTimeExtensions
 {
