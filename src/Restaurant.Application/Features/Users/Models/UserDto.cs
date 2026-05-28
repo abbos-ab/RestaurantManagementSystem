@@ -12,7 +12,7 @@ public sealed class UserDto
 
     public string Email { get; set; }
 
-    public string PhoneNumber { get; set; }
+    public PhoneNumber PhoneNumber { get; set; }
 
     public UserRole Role { get; set; }
 

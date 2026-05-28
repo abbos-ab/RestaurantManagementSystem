@@ -51,9 +51,11 @@ internal sealed class UpdateUserCommandHandler : ICommandHandler<UpdateUserComma
         if (user is null)
             throw new BusinessLogicException(UserErrors.NotFound);
 
+        var newPhone = PhoneNumber.Create(request.PhoneNumber);
+        
         user.FirstName = request.FirstName;
         user.LastName = request.LastName;
-        user.PhoneNumber = request.PhoneNumber;
+        user.PhoneNumber = newPhone;
         user.Role = request.Role;
 
         await _userRepository.UpdateAsync(user, cancellationToken);

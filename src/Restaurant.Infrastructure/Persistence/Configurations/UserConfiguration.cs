@@ -21,5 +21,15 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(x => x.LastName)
             .HasMaxLength(100);
+        
+        builder
+            .Property(x => x.PhoneNumber)
+            .HasConversion(
+                x => x.Value,
+                x => new PhoneNumber(x));
+
+        builder
+            .HasIndex(x => x.PhoneNumber)
+            .IsUnique();
     }
 }

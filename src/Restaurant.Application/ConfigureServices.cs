@@ -2,6 +2,8 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurant.Application.Common.Extensions;
+using Restaurant.Application.Features.Authentications.Interfaces;
+using Restaurant.Application.Features.Authentications.Services;
 using Restaurant.Application.Features.Dishes.Queries;
 using Restaurant.Mediator.Helper.Behaviors;
 
@@ -20,6 +22,10 @@ public static class ConfigureServices
             cfg.RegisterServicesFromAssembly(ApplicationRef.Assembly);
         });
 
+        services
+            .AddScoped<IAccessTokenService, AccessTokenService>()
+            .AddScoped<IRefreshTokenService, RefreshTokenService>();
+        
         services.AddValidatorsFromAssembly(ApplicationRef.Assembly);
 
         services.AddTransient(typeof(IPipelineBehavior<,>),

@@ -16,6 +16,6 @@ public class UserByEmailOrPhoneSpec : Specification<User>
         if (asNoTracking)
             Query.AsNoTracking();
 
-        Query.Where(u => u.Email == email || u.PhoneNumber == phoneNumber);
+        Query.Where(u => u.Email == email || u.PhoneNumber.ToString() == phoneNumber);
     }
 }

@@ -66,14 +66,16 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
         if (exists)
             throw new BusinessLogicException(UserErrors.AlreadyExists);
 
+        var phone = PhoneNumber.Create(request.PhoneNumber);
+        
         var user = new User
         {
             FirstName = request.FirstName,
             LastName = request.LastName,
             Email = request.Email,
-            PhoneNumber = request.PhoneNumber,
+            PhoneNumber = phone,
             Role = request.Role,
-            PasswordHash = Hash(request.Password),
+            Password = Hash(request.Password),
             IsActive = true,
             CreatedAt = _timeProvider.GetLocalDateTimeNowKindUtc()
         };
