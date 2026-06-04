@@ -4,15 +4,10 @@ using Restaurant.Application.Features.Waiters.Commands;
 
 namespace Restaurant.Web.Controllers;
 
-[ApiController]
-[Route("/api[controller]/[action]")]
-public class WaiterController : Controller
+public class WaiterController : BaseController
 {
-    private readonly IMediator _mediator;
-
-    public WaiterController(IMediator mediator)
+    public WaiterController(IMediator mediator) : base(mediator)
     {
-        _mediator = mediator;
     }
 
     [HttpPost("{orderId:long}/take")]

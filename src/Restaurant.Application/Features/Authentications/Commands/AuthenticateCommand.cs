@@ -94,7 +94,7 @@ internal sealed class AuthenticateCommandHandler : ICommandHandler<AuthenticateC
         await _refreshTokenRepository.AddAsync(
             new RefreshToken
             {
-                CreatedAt = _timeProvider.GetLocalDateTimeNowKindUtc(),
+                CreatedAt = now,
                 Token = refreshToken,
                 UserId = user.Id,
                 ExpiresAt = refreshExpiresAt,

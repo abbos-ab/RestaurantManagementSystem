@@ -14,7 +14,11 @@ public static class ConfigureServices
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddSingleton(TimeProvider.System);
-
+        
+        services
+            .AddScoped<IAccessTokenService, AccessTokenService>()
+            .AddScoped<IRefreshTokenService, RefreshTokenService>();
+        
         services.AddMappers();
 
         services.AddMediatR(cfg =>
@@ -22,9 +26,6 @@ public static class ConfigureServices
             cfg.RegisterServicesFromAssembly(ApplicationRef.Assembly);
         });
 
-        services
-            .AddScoped<IAccessTokenService, AccessTokenService>()
-            .AddScoped<IRefreshTokenService, RefreshTokenService>();
         
         services.AddValidatorsFromAssembly(ApplicationRef.Assembly);
 

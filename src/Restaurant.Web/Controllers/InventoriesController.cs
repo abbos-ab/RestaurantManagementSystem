@@ -7,15 +7,10 @@ using Restaurant.Mediator.Helper.Common.Models;
 
 namespace Restaurant.Web.Controllers;
 
-[ApiController]
-[Route("api/[controller]/[action]")]
-public class InventoriesController : ControllerBase
+public class InventoriesController : BaseController
 {
-    private readonly IMediator _mediator;
-
-    public InventoriesController(IMediator mediator)
+    public InventoriesController(IMediator mediator) : base(mediator)
     {
-        _mediator = mediator;
     }
 
     [HttpGet]

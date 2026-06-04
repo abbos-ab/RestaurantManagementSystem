@@ -5,15 +5,10 @@ using Restaurant.Application.Features.Carts.Models;
 
 namespace Restaurant.Web.Controllers;
 
-[ApiController]
-[Route("api/[controller]/[action]")]
-public class CartController : ControllerBase
+public class CartController : BaseController
 {
-    private readonly IMediator _mediator;
-
-    public CartController(IMediator mediator) 
+    public CartController(IMediator mediator) : base(mediator)
     {
-        _mediator = mediator;
     }
 
     [HttpPost]

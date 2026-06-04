@@ -8,15 +8,10 @@ using Restaurant.Mediator.Helper.Common.Models;
 
 namespace Restaurant.Web.Controllers;
 
-[ApiController]
-[Route("api/[controller]/[action]")]
-public class UsersController : ControllerBase
+public class UsersController : BaseController
 {
-    private readonly IMediator _mediator;
-
-    public UsersController(IMediator mediator)
+    public UsersController(IMediator mediator) : base(mediator)
     {
-        _mediator = mediator;
     }
 
     [HttpPost]

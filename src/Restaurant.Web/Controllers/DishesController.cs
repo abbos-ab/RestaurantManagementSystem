@@ -5,15 +5,12 @@ using Restaurant.Application.Features.Dishes.Models;
 using Restaurant.Application.Features.Dishes.Queries;
 using Restaurant.Mediator.Helper.Common.Models;
 
-[ApiController]
-[Route("api/[controller]/[action]")]
-public class DishesController : ControllerBase
-{
-    private readonly IMediator _mediator;
+namespace Restaurant.Web.Controllers;
 
-    public DishesController(IMediator mediator)
+public class DishesController : BaseController
+{
+    public DishesController(IMediator mediator) : base(mediator)
     {
-        _mediator = mediator;
     }
 
     [HttpGet]
