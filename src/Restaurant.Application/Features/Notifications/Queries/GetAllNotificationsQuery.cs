@@ -32,7 +32,6 @@ internal sealed class GetAllNotificationsQueryHandler : IQueryHandler<GetAllNoti
 
         spec.Query
             .Where(x => x.DeletedAt == null)
-            .OrderByDescending(x => x.CreatedAt)
             .WithPagination(request.PaginationInfo);
 
         var notifications = await _notificationRepository.ListAsync(spec, cancellationToken);

@@ -37,7 +37,6 @@ internal sealed class
             .Where(x =>
                 x.UserId == request.UserId &&
                 x.DeletedAt == null)
-            .OrderByDescending(x => x.CreatedAt)
             .WithPagination(request.PaginationInfo);
 
         var notifications = await _notificationRepository.ListAsync(spec, cancellationToken);

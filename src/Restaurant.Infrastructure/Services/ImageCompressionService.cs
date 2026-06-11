@@ -1,4 +1,3 @@
-using System.Net.Mime;
 using Restaurant.Application.Services;
 using Restaurant.Mediator.Helper.Common.Models;
 using Restaurant.Mediator.Helper.Exceptions;

@@ -36,7 +36,6 @@ internal sealed class GetUnreadNotificationsQueryHandler : IQueryHandler<GetUnre
                 x.UserId == request.UserId &&
                 !x.IsRead &&
                 x.DeletedAt == null)
-            .OrderByDescending(x => x.CreatedAt)
             .WithPagination(request.PaginationInfo);
 
         var notifications = await _notificationRepository.ListAsync(spec, cancellationToken);
