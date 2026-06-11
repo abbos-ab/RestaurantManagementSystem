@@ -1,4 +1,3 @@
-using Auth.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities;
 using Restaurant.Infrastructure.Persistence.Internal;
@@ -24,8 +23,11 @@ public class AppDbContext : DbContext, IUnitOfWork
     public DbSet<User> Users { get; set; }
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
+    public DbSet<DishMedia> DishMedias { get; set; }
     public DbSet<Group> Groups { get; set; }
-    public DbSet<UserGroupRelation> UserGroupRelations { get; set; }    
+    public DbSet<UserGroupRelation> UserGroupRelations { get; set; }
+    public DbSet<DishMediaRelation> DishMediaRelations { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

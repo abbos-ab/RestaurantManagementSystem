@@ -5,6 +5,7 @@ using Restaurant.Application.Features.Users.Models;
 using Restaurant.Application.Features.Users.Queries;
 using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.Common.Models;
+using Restaurant.Mediator.Helper.Groups;
 
 namespace Restaurant.Web.Controllers;
 
@@ -15,6 +16,7 @@ public class UsersController : BaseController
     }
 
     [HttpPost]
+    [GroupAuthorize(GroupNames.Administrators)]
     public async Task<ActionResult<UserDto>> Create(
         CreateUserCommand command,
         CancellationToken cancellationToken = default)
@@ -23,6 +25,7 @@ public class UsersController : BaseController
     }
 
     [HttpPut]
+    [GroupAuthorize(GroupNames.Administrators)]
     public async Task<ActionResult<UserDto>> Update(
         UpdateUserCommand command,
         CancellationToken cancellationToken = default)
@@ -31,6 +34,7 @@ public class UsersController : BaseController
     }
 
     [HttpPut("{userId:long}")]
+    [GroupAuthorize(GroupNames.Administrators)]
     public async Task<ActionResult<UserDto>> UpdateRole(
         long userId,
         UserRole role,
@@ -40,6 +44,7 @@ public class UsersController : BaseController
     }
     
     [HttpDelete("{userId:long}")]
+    [GroupAuthorize(GroupNames.Administrators)]
     public async Task<IActionResult> Delete(
         long userId,
         CancellationToken cancellationToken = default)
@@ -57,6 +62,7 @@ public class UsersController : BaseController
     }
 
     [HttpGet]
+    [GroupAuthorize(GroupNames.Administrators)]
     public async Task<ActionResult<PaginatedResult<UserDto>>> GetAll(
         [FromQuery] PaginationInfo paginationInfo,
         CancellationToken cancellationToken = default)

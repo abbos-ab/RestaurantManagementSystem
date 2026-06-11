@@ -1,7 +1,7 @@
 ﻿using Ardalis.Specification.EntityFrameworkCore;
-using Auth.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Application.Features.UsersGroups.Repositories;
+using Restaurant.Domain.Entities;
 
 namespace Restaurant.Infrastructure.Persistence.Repositories;
 

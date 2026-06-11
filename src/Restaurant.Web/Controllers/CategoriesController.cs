@@ -4,6 +4,7 @@ using Restaurant.Application.Features.Categories.Commands;
 using Restaurant.Application.Features.Categories.Models;
 using Restaurant.Application.Features.Categories.Queries;
 using Restaurant.Mediator.Helper.Common.Models;
+using Restaurant.Mediator.Helper.Groups;
 
 namespace Restaurant.Web.Controllers;
 
@@ -33,6 +34,7 @@ public class CategoriesController : BaseController
     }
 
     [HttpPost]
+    [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
     public async Task<IActionResult> Create(
         [FromBody] CreateCategoryCommand command,
         CancellationToken cancellationToken = default)
@@ -42,6 +44,7 @@ public class CategoriesController : BaseController
     }
 
     [HttpPut("{categoryId:long}")]
+    [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
     public async Task<NoContentResult> Update(
         long categoryId,
         [FromBody] CreateCategoryCommand request,
@@ -59,6 +62,7 @@ public class CategoriesController : BaseController
     }
 
     [HttpDelete("{categoryId:long}")]
+    [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
     public async Task<NoContentResult> Delete(
         long categoryId,
         CancellationToken cancellationToken = default)

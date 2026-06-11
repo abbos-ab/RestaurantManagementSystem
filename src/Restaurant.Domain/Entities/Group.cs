@@ -1,7 +1,6 @@
-﻿using Restaurant.Domain;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Auth.Domain.Models;
+namespace Restaurant.Domain.Entities;
 
 public sealed class Group : BaseEntity
 {

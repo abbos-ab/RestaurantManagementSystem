@@ -1,5 +1,5 @@
 ﻿using Ardalis.Specification;
-using Auth.Domain.Models;
+using Restaurant.Domain.Entities;
 
 namespace Restaurant.Application.Features.UsersGroups.Specifications;
 

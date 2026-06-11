@@ -1,6 +1,6 @@
-﻿using Auth.Domain.Models;
-using Restaurant.Application.Features.UsersGroups.Models;
+﻿using Restaurant.Application.Features.UsersGroups.Models;
 using Restaurant.Application.Features.UsersGroups.Repositories;
+using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.CQRS.Queries;
 using Restaurant.Mediator.Helper.Persistence;
 

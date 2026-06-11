@@ -5,6 +5,7 @@ using Restaurant.Application.Features.Tables.Models;
 using Restaurant.Application.Features.Tables.Queries;
 using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.Common.Models;
+using Restaurant.Mediator.Helper.Groups;
 
 namespace Restaurant.Web.Controllers;
 
@@ -15,6 +16,7 @@ public class TablesController : BaseController
     }
 
     [HttpPost]
+    [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
     public async Task<ActionResult<TableDto>> Create(
         CreateTableCommand command,
         CancellationToken cancellationToken = default)
@@ -23,6 +25,7 @@ public class TablesController : BaseController
     }
 
     [HttpPut("{tableId:long}")]
+    [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
     public async Task<ActionResult<TableDto>> Update(
         long tableId,
         int number,
@@ -41,6 +44,7 @@ public class TablesController : BaseController
     }
 
     [HttpPut("{tableId:long}/capacity")]
+    [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs, GroupNames.Waiters)]
     public async Task<ActionResult<TableDto>> UpdateCapacity(
         long tableId,
         int capacity,
@@ -50,6 +54,7 @@ public class TablesController : BaseController
     }
 
     [HttpDelete("{tableId:long}")]
+    [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
     public async Task<IActionResult> Delete(
         long tableId,
         CancellationToken cancellationToken = default)

@@ -1,6 +1,6 @@
-﻿using Auth.Domain.Models;
-using FluentValidation;
+﻿using FluentValidation;
 using Restaurant.Application.Features.UsersGroups.Repositories;
+using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.Common.Extensions;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 

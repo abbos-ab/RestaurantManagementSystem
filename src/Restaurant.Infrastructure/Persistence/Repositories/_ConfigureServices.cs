@@ -4,6 +4,7 @@ using Restaurant.Application.Features.Carts.Repositories;
 using Restaurant.Application.Features.Categories.Repositories;
 using Restaurant.Application.Features.Dishes.Repositories;
 using Restaurant.Application.Features.Inventories.Repositories;
+using Restaurant.Application.Features.Medias.Repositories;
 using Restaurant.Application.Features.Notifications.Repositories;
 using Restaurant.Application.Features.OrderHistories.Repositories;
 using Restaurant.Application.Features.Orders.Repositories;
@@ -34,6 +35,8 @@ public static class ConfigureServices
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IGroupRepository, GroupRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<IDishMediaRepository, DishMediaRepository>();
+        services.AddScoped<IDishMediaRelationRepository, DishMediaRelationRepository>();
         
         return services;
     }

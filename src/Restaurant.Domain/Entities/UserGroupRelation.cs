@@ -1,6 +1,4 @@
-﻿using Auth.Domain.Models;
-
-namespace Restaurant.Domain.Entities;
+﻿namespace Restaurant.Domain.Entities;
 
 public sealed class UserGroupRelation
 {

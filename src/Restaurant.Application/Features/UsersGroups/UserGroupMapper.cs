@@ -1,5 +1,5 @@
-﻿using Auth.Domain.Models;
-using Restaurant.Application.Features.UsersGroups.Models;
+﻿using Restaurant.Application.Features.UsersGroups.Models;
+using Restaurant.Domain.Entities;
 using Riok.Mapperly.Abstractions;
 
 namespace Restaurant.Application.Features.UsersGroups;

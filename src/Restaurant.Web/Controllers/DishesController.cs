@@ -4,6 +4,7 @@ using Restaurant.Application.Features.Dishes.Commands;
 using Restaurant.Application.Features.Dishes.Models;
 using Restaurant.Application.Features.Dishes.Queries;
 using Restaurant.Mediator.Helper.Common.Models;
+using Restaurant.Mediator.Helper.Groups;
 
 namespace Restaurant.Web.Controllers;
 
@@ -34,6 +35,7 @@ public class DishesController : BaseController
     }
 
     [HttpPost]
+    [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
     public async Task<IActionResult> Create(CreateDishCommand command)
     {
         var result = await _mediator.Send(command);
@@ -41,6 +43,7 @@ public class DishesController : BaseController
     }
 
     [HttpPut("{dishId:long}")]
+    [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
     public async Task<NoContentResult> Update(
         long dishId,
         [FromBody] CreateDishCommand request,
@@ -61,6 +64,7 @@ public class DishesController : BaseController
     }
 
     [HttpPut("{dishId:long}")]
+    [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
     public async Task<ActionResult<DishDto>> UpdatePrice(
         long dishId,
         decimal price,
@@ -70,6 +74,7 @@ public class DishesController : BaseController
     }
     
     [HttpDelete("{dishId:long}")]
+    [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
     public async Task<NoContentResult> Delete(long dishId)
     {
         await _mediator.Send(new DeleteDishCommand(dishId));
