@@ -6,7 +6,7 @@ namespace Restaurant.Web.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-//[Authorize]
+[Authorize]
 public abstract class BaseController : ControllerBase
 {
     protected readonly IMediator _mediator;

@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Restaurant.Application.Features.Users.Models;
 using Restaurant.Application.Features.Users.Repositories;
 using Restaurant.Application.Features.Users.Specifications;
@@ -48,20 +49,23 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
     private readonly IUserRepository _userRepository;
     private readonly UserMapper _userMapper;
     private readonly TimeProvider _timeProvider;
+    private readonly IPasswordHasher<User> _passwordHasher;
 
     public CreateUserCommandHandler(
         IUserRepository userRepository,
         UserMapper userMapper,
-        TimeProvider timeProvider)
+        TimeProvider timeProvider, 
+        IPasswordHasher<User> passwordHasher)
     {
         _userRepository = userRepository;
         _userMapper = userMapper;
         _timeProvider = timeProvider;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<UserDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        var spec = new UserByEmailOrPhoneSpec(request.Email, request.PhoneNumber);
+        var spec = new UserByEmailSpec(request.Email);
         var exists = await _userRepository.AnyAsync(spec,cancellationToken);
         if (exists)
             throw new BusinessLogicException(UserErrors.AlreadyExists);
@@ -75,20 +79,15 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
             Email = request.Email,
             PhoneNumber = phone,
             Role = request.Role,
-            Password = Hash(request.Password),
+            Password = "",
             IsActive = true,
             CreatedAt = _timeProvider.GetLocalDateTimeNowKindUtc()
         };
-
+        
+        user.Password = _passwordHasher.HashPassword(user, request.Password);
+        
         await _userRepository.AddAsync(user, cancellationToken);
 
         return _userMapper.Map(user);
-    }
-    
-    private string Hash(string password)
-    {
-        var bytes = Encoding.UTF8.GetBytes(password);
-        var hash = SHA256.HashData(bytes);
-        return Convert.ToBase64String(hash);
     }
 }

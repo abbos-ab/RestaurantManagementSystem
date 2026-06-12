@@ -1,14 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Minio;
 using Restaurant.Application;
-using Restaurant.Application.Services;
 using Restaurant.Domain.Entities;
 using Restaurant.Infrastructure;
 using Restaurant.Infrastructure.Persistence;
 using Restaurant.Infrastructure.Persistence.Repositories;
-using Restaurant.Infrastructure.Services;
-using Restaurant.Infrastructure.Settings;
 using Restaurant.Web;
 using Restaurant.Web.Services;
 
@@ -34,18 +30,6 @@ builder.Services.AddRepositories();
 
 builder.Services.AddApplicationServices();
 
-builder.Services.AddMinio(x =>
-{
-    var settings = builder.Configuration
-        .GetSection("MinioSettings")
-        .Get<MinioSettings>();
-
-    x.WithEndpoint(settings.Endpoint);
-    x.WithCredentials(settings.AccessKey, settings.SecretKey);
-    x.WithRegion(settings.Region);
-    x.WithSSL(settings.Secure);
-});
-
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -54,6 +38,18 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services
     .AddJwtConfiguration(builder.Configuration)
     .AddInfrastructureServices(builder.Configuration, builder.Environment.IsDevelopment());
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
+
 
 var app = builder.Build();
 

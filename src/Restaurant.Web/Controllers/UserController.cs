@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.Application.Features.Users.Commands;
 using Restaurant.Application.Features.Users.Models;
@@ -16,7 +17,7 @@ public class UsersController : BaseController
     }
 
     [HttpPost]
-    [GroupAuthorize(GroupNames.Administrators)]
+    [AllowAnonymous]
     public async Task<ActionResult<UserDto>> Create(
         CreateUserCommand command,
         CancellationToken cancellationToken = default)
@@ -42,7 +43,7 @@ public class UsersController : BaseController
     {
         return Ok(await _mediator.Send(new UpdateUserRoleCommand(userId, role), cancellationToken));
     }
-    
+
     [HttpDelete("{userId:long}")]
     [GroupAuthorize(GroupNames.Administrators)]
     public async Task<IActionResult> Delete(

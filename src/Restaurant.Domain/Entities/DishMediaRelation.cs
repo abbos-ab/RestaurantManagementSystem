@@ -1,6 +1,6 @@
 namespace Restaurant.Domain.Entities;
 
-public sealed class DishMediaRelation
+public sealed class DishMediaRelation : BaseEntity
 {
     public required long DishId { get; set; }
     public Dish Dish { get; set; } = null!;
