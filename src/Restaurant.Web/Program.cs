@@ -26,16 +26,13 @@ builder.Services.AddDataProtection();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddRepositories();
-
-builder.Services.AddApplicationServices();
-
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services
+    .AddApplicationServices()
     .AddJwtConfiguration(builder.Configuration)
     .AddInfrastructureServices(builder.Configuration, builder.Environment.IsDevelopment());
 

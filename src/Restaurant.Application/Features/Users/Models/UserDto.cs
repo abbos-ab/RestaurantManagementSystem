@@ -14,7 +14,8 @@ public sealed class UserDto
 
     public PhoneNumber PhoneNumber { get; set; }
 
-    public UserRole Role { get; set; }
+    public ICollection<GroupDto> Groups { get; set; }
+        = new List<GroupDto>();
 
     public bool IsActive { get; set; }
 

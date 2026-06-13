@@ -3,6 +3,7 @@ using Restaurant.Application.Features.UsersGroups.Repositories;
 using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.CQRS.Queries;
 using Restaurant.Mediator.Helper.Persistence;
+using GroupDto = Restaurant.Application.Features.Users.Models.GroupDto;
 
 namespace Restaurant.Application.Features.UsersGroups.Queries;
 

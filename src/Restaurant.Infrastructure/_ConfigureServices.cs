@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurant.Infrastructure.Jobs;
+using Restaurant.Infrastructure.Persistence;
 using Restaurant.Infrastructure.Services;
 
 namespace Restaurant.Infrastructure;
@@ -13,6 +14,7 @@ public static class ConfigureServices
         bool isDev)
     {
         services
+            .AddPersistenceServices(configuration, isDev)
             .AddJobServices(configuration)
             .AddServices(configuration);
         

@@ -9,4 +9,7 @@ public sealed class Group : BaseEntity
 
     [StringLength(500)]
     public required string Description { get; set; }
+
+    public ICollection<User> Users { get; set; }
+        = new List<User>();
 }

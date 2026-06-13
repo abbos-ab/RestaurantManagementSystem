@@ -38,10 +38,10 @@ public class UsersController : BaseController
     [GroupAuthorize(GroupNames.Administrators)]
     public async Task<ActionResult<UserDto>> UpdateRole(
         long userId,
-        UserRole role,
+        List<long> groupIds,
         CancellationToken cancellationToken = default)
     {
-        return Ok(await _mediator.Send(new UpdateUserRoleCommand(userId, role), cancellationToken));
+        return Ok(await _mediator.Send(new UpdateUserRoleCommand(userId, groupIds), cancellationToken));
     }
 
     [HttpDelete("{userId:long}")]

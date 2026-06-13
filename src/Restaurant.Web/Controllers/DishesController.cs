@@ -26,12 +26,21 @@ public class DishesController : BaseController
 
     [HttpGet("{dishId:long}")]
     public async Task<DishDto?> GetById(
-        long dishId, 
+        long dishId,
         CancellationToken cancellationToken = default)
     {
         return await _mediator.Send(
             new GetDishById(dishId),
             cancellationToken);
+    }
+
+    [HttpGet("{categoryId:long}")]
+    public async Task<PaginatedResult<DishDto>> GetByCategory(
+        long categoryId,
+        PaginationInfo paginationInfo,
+        CancellationToken cancellationToken = default)
+    {
+        return await _mediator.Send(new GetDishesByCategory(categoryId, paginationInfo), cancellationToken);
     }
 
     [HttpPost]
@@ -72,7 +81,7 @@ public class DishesController : BaseController
     {
         return Ok(await _mediator.Send(new UpdateDishPriceCommand(dishId, price), cancellationToken));
     }
-    
+
     [HttpDelete("{dishId:long}")]
     [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
     public async Task<NoContentResult> Delete(long dishId)

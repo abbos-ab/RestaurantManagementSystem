@@ -11,8 +11,7 @@ public sealed record UpdateUserCommand(
     long Id,
     string FirstName,
     string LastName,
-    string PhoneNumber,
-    UserRole Role
+    string PhoneNumber
 ) : ICommand<UserDto>;
 
 // ReSharper disable once UnusedType.Global
@@ -56,7 +55,6 @@ internal sealed class UpdateUserCommandHandler : ICommandHandler<UpdateUserComma
         user.FirstName = request.FirstName;
         user.LastName = request.LastName;
         user.PhoneNumber = newPhone;
-        user.Role = request.Role;
 
         await _userRepository.UpdateAsync(user, cancellationToken);
 

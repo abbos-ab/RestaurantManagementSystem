@@ -31,5 +31,22 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder
             .HasIndex(x => x.PhoneNumber)
             .IsUnique();
+        
+        builder
+            .HasMany(x => x.Groups)
+            .WithMany(x => x.Users)
+            .UsingEntity<UserGroupRelation>(
+                j =>
+                {
+                    j.HasKey(x => new { x.UserId, x.GroupId });
+
+                    j.HasOne(x => x.User)
+                        .WithMany()
+                        .HasForeignKey(x => x.UserId);
+
+                    j.HasOne(x => x.Group)
+                        .WithMany()
+                        .HasForeignKey(x => x.GroupId);
+                });
     }
 }

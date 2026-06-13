@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using Restaurant.Mediator.Helper.Groups;
 using Restaurant.Mediator.Helper.Settings;
 
 namespace Restaurant.Web;
@@ -12,7 +14,6 @@ internal static class ConfigureServices
     {
         var jwtSection = configuration.GetRequiredSection("JwtSettings");
 
-        // direct DI uchun
         var jwtSettings = jwtSection.Get<JwtSettings>()
                           ?? throw new InvalidOperationException("JwtSettings is missing");
 
@@ -35,7 +36,10 @@ internal static class ConfigureServices
             });
 
         services.AddAuthorization();
-
+        
+        services.AddSingleton<IAuthorizationHandler, GroupHandler>();
+        services.AddSingleton<IAuthorizationPolicyProvider, GroupPolicyProvider>();
+        
         return services;
     }
 }

@@ -2,6 +2,7 @@ using Ardalis.Specification;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Restaurant.Application.Features.Medias.Repositories;
+using Restaurant.Application.Services;
 using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.Common.Models;
 using Restaurant.Mediator.Helper.CQRS.Commands;
@@ -27,6 +28,7 @@ internal sealed class DeletePhotoCommandHandler : ICommandHandler<DeletePhotoCom
 {
     private readonly IDishMediaRepository _dishMediaRepository;
     private readonly IDishMediaRelationRepository _dishMediaRelationRepository;
+    private readonly IMinioClientService _minioClientService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<DeletePhotoCommandHandler> _logger;
 
@@ -34,12 +36,14 @@ internal sealed class DeletePhotoCommandHandler : ICommandHandler<DeletePhotoCom
         IDishMediaRepository dishMediaRepository,
         IDishMediaRelationRepository dishMediaRelationRepository,
         ILogger<DeletePhotoCommandHandler> logger,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork, 
+        IMinioClientService minioClientService)
     {
         _dishMediaRepository = dishMediaRepository;
         _dishMediaRelationRepository = dishMediaRelationRepository;
         _logger = logger;
         _unitOfWork = unitOfWork;
+        _minioClientService = minioClientService;
     }
 
     public async Task Handle(DeletePhotoCommand request, CancellationToken cancellationToken)
@@ -62,9 +66,11 @@ internal sealed class DeletePhotoCommandHandler : ICommandHandler<DeletePhotoCom
         await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            await _dishMediaRepository.DeleteAsync(media, cancellationToken);
+            await _minioClientService.RemoveObjectAsync(media.Path);
+            
             await _dishMediaRelationRepository.DeleteAsync(mediaRelation, cancellationToken);
-
+            await _dishMediaRepository.DeleteAsync(media, cancellationToken);
+            
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
 
@@ -81,7 +87,9 @@ internal sealed class DeletePhotoCommandHandler : ICommandHandler<DeletePhotoCom
 
             await transaction.RollbackAsync(cancellationToken);
 
-            throw new InvalidOperationException("Failed to delete Dish Media with Id {MediaId}", ex);
+            throw new InvalidOperationException(
+                $"Failed to delete Dish Media with Id {request.MediaId}",
+                ex);
         }
     }
 }
