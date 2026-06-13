@@ -27,4 +27,12 @@ public class WaiterController : BaseController
     {
         return await _mediator.Send(new RejectOrderCommand(orderId, waiterId), cancellationToken);
     }
+
+    [HttpPost("{tableId:long}/CalledWaiter")]
+    public async Task<bool> CalledWaiter(
+        long tableId, 
+        CancellationToken cancellationToken = default)
+    {
+        return await _mediator.Send(new CallWaiterCommand(tableId), cancellationToken);
+    }
 }
