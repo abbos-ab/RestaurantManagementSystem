@@ -1,6 +1,6 @@
 namespace Restaurant.Domain.Entities;
 
-public class Notification : BaseEntity
+public sealed class Notification : BaseEntity
 {
     public long UserId { get; set; }
     public User User { get; set; }

@@ -25,7 +25,6 @@ public static class ConfigureServices
         {
             cfg.RegisterServicesFromAssembly(ApplicationRef.Assembly);
         });
-
         
         services.AddValidatorsFromAssembly(ApplicationRef.Assembly);
 

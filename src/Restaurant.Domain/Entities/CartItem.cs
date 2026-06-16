@@ -1,6 +1,6 @@
 namespace Restaurant.Domain.Entities;
 
-public class CartItem : BaseEntity
+public sealed class CartItem : BaseEntity
 {
     public long CartId { get; set; }
     public Cart Cart { get; set; }

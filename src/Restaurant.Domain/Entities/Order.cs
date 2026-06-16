@@ -1,25 +1,24 @@
-﻿namespace Restaurant.Domain.Entities
+﻿namespace Restaurant.Domain.Entities;
+
+public sealed class Order : BaseEntity
 {
-    public class Order : BaseEntity
-    {
-        public long TableId { get; set; }
-        public Table Table { get; set; }
+    public long TableId { get; set; }
+    public Table Table { get; set; }
 
-        public long? WaiterId { get; set; }
-        public User? Waiter { get; set; }
+    public long? WaiterId { get; set; }
+    public User? Waiter { get; set; }
 
-        public OrderStatus Status { get; set; } = OrderStatus.Created;
+    public OrderStatus Status { get; set; } = OrderStatus.Created;
 
-        public decimal TotalPrice { get; set; }
+    public decimal TotalPrice { get; set; }
 
-        public List<OrderItem> OrderItems { get; set; }
-    }
+    public List<OrderItem> OrderItems { get; set; }
+}
 
-    public enum OrderStatus
-    {
-        Created,
-        InProgress,
-        Completed,
-        Rejected,
-    }
+public enum OrderStatus
+{
+    Created,
+    InProgress,
+    Completed,
+    Rejected,
 }

@@ -1,6 +1,6 @@
 namespace Restaurant.Domain.Entities;
 
-public class User : BaseEntity
+public sealed class User : BaseEntity
 {
     public string FirstName { get; set; }
 

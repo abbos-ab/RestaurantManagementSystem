@@ -1,6 +1,6 @@
 namespace Restaurant.Domain.Entities;
 
-public class DishMedia : BaseEntity
+public sealed class DishMedia : BaseEntity
 {
     public required MediaType MediaType { get; set; }
     

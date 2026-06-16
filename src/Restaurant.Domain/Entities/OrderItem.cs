@@ -1,7 +1,6 @@
 namespace Restaurant.Domain.Entities;
-
    
-public class OrderItem : BaseEntity
+public sealed class OrderItem : BaseEntity
 {
     public long OrderId { get; set; }
     public Order Order { get; set; }

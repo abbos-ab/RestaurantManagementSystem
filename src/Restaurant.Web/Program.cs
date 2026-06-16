@@ -33,8 +33,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services
     .AddApplicationServices()
-    .AddJwtConfiguration(builder.Configuration)
-    .AddInfrastructureServices(builder.Configuration, builder.Environment.IsDevelopment());
+    .AddInfrastructureServices(builder.Configuration, builder.Environment.IsDevelopment())
+    .AddJwtConfiguration(builder.Configuration);
 
 builder.Services.AddCors(options =>
 {

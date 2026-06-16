@@ -1,6 +1,6 @@
 namespace Restaurant.Domain.Entities;
 
-public class Payment : BaseEntity
+public sealed class Payment : BaseEntity
 {
     public long OrderId { get; set; }
     public Order Order { get; set; }

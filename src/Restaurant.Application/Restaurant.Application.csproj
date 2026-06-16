@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="Features\Carts\Queries\" />
+    <Folder Include="Features\Review\Specifications\" />
   </ItemGroup>
 
   <PropertyGroup>

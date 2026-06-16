@@ -4,7 +4,7 @@ using Restaurant.Domain.Entities;
 
 namespace Restaurant.Infrastructure.Persistence.Configurations;
 
-internal sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
+public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
 {
     public void Configure(EntityTypeBuilder<RefreshToken> builder)
     {
