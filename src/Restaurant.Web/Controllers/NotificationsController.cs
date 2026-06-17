@@ -13,14 +13,6 @@ public class NotificationsController : BaseController
     {
     }
 
-    [HttpPost]
-    public async Task<ActionResult<NotificationDto>> Create(
-        CreateNotificationCommand command,
-        CancellationToken cancellationToken = default)
-    {
-        return Ok(await _mediator.Send(command, cancellationToken));
-    }
-
     [HttpPut]
     public async Task<ActionResult<NotificationDto>> Update(
         UpdateNotificationCommand command,
