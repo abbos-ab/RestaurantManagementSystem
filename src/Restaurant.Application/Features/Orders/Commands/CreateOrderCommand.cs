@@ -1,10 +1,12 @@
 using FluentValidation;
+using MediatR;
 using Restaurant.Application.Features.Dishes;
 using Restaurant.Application.Features.Dishes.Repositories;
 using Restaurant.Application.Features.Dishes.Specifications;
 using Restaurant.Application.Features.Inventories;
 using Restaurant.Application.Features.Inventories.Repositories;
 using Restaurant.Application.Features.Inventories.Specifications;
+using Restaurant.Application.Features.Notifications.Commands;
 using Restaurant.Application.Features.Orders.Models;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Application.Features.Tables;
@@ -44,6 +46,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
     private readonly ITableRepository _tableRepository;
     private readonly TimeProvider _timeProvider;
     private readonly OrderMapper _mapper;
+    private readonly IMediator _mediator;
 
     public CreateOrderCommandHandler(
         IOrderRepository orderRepository,
@@ -51,7 +54,8 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
         IInventoryRepository inventoryRepository,
         TimeProvider timeProvider, OrderMapper mapper,
         ITableRepository tableRepository,
-        IOrderItemRepository orderItemRepository)
+        IOrderItemRepository orderItemRepository,
+        IMediator mediator)
     {
         _orderRepository = orderRepository;
         _dishRepository = dishRepository;
@@ -59,6 +63,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
         _mapper = mapper;
         _tableRepository = tableRepository;
         _orderItemRepository = orderItemRepository;
+        _mediator = mediator;
         _inventoryRepository = inventoryRepository;
     }
 
@@ -94,18 +99,18 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
         };
 
         await _orderRepository.AddAsync(order, cancellationToken);
-        
+
         decimal total = 0;
         List<OrderItem> orderItems = new List<OrderItem>();
 
         var dishIds = request.Items.Select(x => x.DishId).ToList();
-        
+
         var dishesSpec = new DishesByDishIdsSpec(dishIds);
         var dishInventoriesSpec = new InventoriesByDishIdsSpec(dishIds);
-        
+
         var dishes = await _dishRepository.ListAsync(dishesSpec, cancellationToken);
         var dishInventories = await _inventoryRepository.ListAsync(dishInventoriesSpec, cancellationToken);
-        
+
         foreach (var item in request.Items)
         {
             var dish = dishes.FirstOrDefault(x => x.Id == item.DishId);
@@ -142,6 +147,14 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
 
         order.TotalPrice += total;
         await _orderRepository.SaveChangesAsync(cancellationToken);
+
+        await _mediator.Send(new CreateNotificationCommand(
+                null,
+                NotificationType.OrderCreated,
+                order.Id,
+                "Order created"),
+            cancellationToken
+        );
 
         return _mapper.Map(order);
     }

@@ -1,5 +1,4 @@
 using FluentValidation;
-using Restaurant.Application.Features.Notifications.Models;
 using Restaurant.Application.Features.Notifications.Repositories;
 using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.Common.Extensions;
@@ -8,11 +7,11 @@ using Restaurant.Mediator.Helper.CQRS.Commands;
 namespace Restaurant.Application.Features.Notifications.Commands;
 
 public sealed record CreateNotificationCommand(
-    long UserId,
+    long? UserId,
     NotificationType Type,
-    long? OrderId,
+    long OrderId,
     string? Message
-) : ICommand<NotificationDto>;
+) : ICommand;
 
 // ReSharper disable once UnusedType.Global
 public sealed class CreateNotificationCommandValidator : AbstractValidator<CreateNotificationCommand>
@@ -28,7 +27,7 @@ public sealed class CreateNotificationCommandValidator : AbstractValidator<Creat
     }
 }
 
-internal sealed class CreateNotificationCommandHandler : ICommandHandler<CreateNotificationCommand, NotificationDto>
+internal sealed class CreateNotificationCommandHandler : ICommandHandler<CreateNotificationCommand>
 {
     private readonly INotificationRepository _notificationRepository;
     private readonly NotificationMapper _notificationMapper;
@@ -44,7 +43,7 @@ internal sealed class CreateNotificationCommandHandler : ICommandHandler<CreateN
         _timeProvider = timeProvider;
     }
 
-    public async Task<NotificationDto> Handle(CreateNotificationCommand request, CancellationToken cancellationToken)
+    public async Task Handle(CreateNotificationCommand request, CancellationToken cancellationToken)
     {
         var notification = new Notification
         {
@@ -58,7 +57,5 @@ internal sealed class CreateNotificationCommandHandler : ICommandHandler<CreateN
         };
 
         await _notificationRepository.AddAsync(notification, cancellationToken);
-
-        return _notificationMapper.Map(notification);
     }
 }
