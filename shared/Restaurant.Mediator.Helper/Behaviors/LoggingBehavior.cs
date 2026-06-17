@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Restaurant.Mediator.Helper.Common.Extensions;
 
-namespace Oshiqona.Mediator.Helper.Behaviors;
+namespace Restaurant.Mediator.Helper.Behaviors;
 
 /// <summary>
 /// Промежуточный обработчик пайплайна для логгирования запросов через MediatR.

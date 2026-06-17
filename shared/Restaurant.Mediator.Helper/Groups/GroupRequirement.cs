@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace Auth.Shared.Groups;
+namespace Restaurant.Mediator.Helper.Groups;
 
 public class GroupRequirement : IAuthorizationRequirement
 {

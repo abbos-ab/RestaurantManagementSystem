@@ -1,5 +1,4 @@
-﻿using Auth.Shared.Groups;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 
 namespace Restaurant.Mediator.Helper.Groups;
 
