@@ -12,7 +12,7 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Price)
+        builder.Property(x => x.TotalPrice)
             .HasColumnType("decimal(18,2)");
 
         builder.Property(x => x.Quantity)

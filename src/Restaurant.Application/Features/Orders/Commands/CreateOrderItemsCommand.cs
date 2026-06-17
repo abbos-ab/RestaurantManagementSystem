@@ -91,7 +91,7 @@ internal sealed class CreateOrderItemCommandHandler : ICommandHandler<CreateOrde
                     OrderId = order.Id,
                     DishId = item.DishId,
                     Quantity = item.Quantity,
-                    Price = isDiscountable ? ((dish.Price * item.Quantity) / 100) * 80 : dish.Price * item.Quantity,
+                    TotalPrice = isDiscountable ? ((dish.Price * item.Quantity) / 100) * 80 : dish.Price * item.Quantity,
                     Status = OrderItemStatus.Pending,
                     CreatedAt = _timeProvider.GetLocalDateTimeNowKindUtc(),
                 };
@@ -104,7 +104,7 @@ internal sealed class CreateOrderItemCommandHandler : ICommandHandler<CreateOrde
             else
             {
                 orderItem.Quantity += item.Quantity;
-                orderItem.Price +=
+                orderItem.TotalPrice +=
                     isDiscountable ? ((dish.Price * item.Quantity) / 100) * 80 : dish.Price * item.Quantity;
                 orderItem.Status = OrderItemStatus.Pending;
 

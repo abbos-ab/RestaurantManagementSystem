@@ -13,7 +13,7 @@ public sealed class OrderItem : BaseEntity
 
     public int Quantity { get; set; }
 
-    public decimal Price { get; set; }
+    public decimal TotalPrice { get; set; }
 
     public OrderItemStatus Status { get; set; } = OrderItemStatus.Pending;
 

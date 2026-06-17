@@ -98,6 +98,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
         List<OrderItem> orderItems = new List<OrderItem>();
         foreach (var item in request.Items)
         {
+            //TODO need to move outside of the loop
             var dish = await _dishRepository.GetByIdAsync(item.DishId, cancellationToken);
 
             if (dish is null)
@@ -108,7 +109,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
                 OrderId = order.Id,
                 DishId = dish.Id,
                 Quantity = item.Quantity,
-                Price = dish.Price * item.Quantity,
+                TotalPrice = dish.Price * item.Quantity,
                 Status = OrderItemStatus.Pending
             };
 

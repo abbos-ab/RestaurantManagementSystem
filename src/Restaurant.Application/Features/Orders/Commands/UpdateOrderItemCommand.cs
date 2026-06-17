@@ -83,7 +83,7 @@ internal sealed class UpdateOrderItemCommandHandler : ICommandHandler<UpdateOrde
         if (orderItem.Status == OrderItemStatus.Pending || orderItem.Status == OrderItemStatus.Preparing)
         {
             orderItem.Quantity = request.Item.Quantity;
-            orderItem.Price = dish.Price * request.Item.Quantity;
+            orderItem.TotalPrice = dish.Price * request.Item.Quantity;
             orderItem.UpdatedAt = _timeProvider.GetLocalDateTimeNowKindUtc();
 
             dishInventory.Quantity += deference;
