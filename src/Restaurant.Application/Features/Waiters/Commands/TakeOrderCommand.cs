@@ -52,7 +52,7 @@ internal sealed class TakeOrderCommandHandler : ICommandHandler<TakeOrderCommand
 
         var order = await _orderRepository.GetByIdAsync(request.OrderId, cancellationToken);
         if (order is null)
-            throw new BusinessLogicException(WaiterErrors.OrderNotFound);
+            throw new BusinessLogicException(OrderErrors.NotFound);
 
         if (order.WaiterId is not null && order.WaiterId != waiter.Id)
             throw new BusinessLogicException(WaiterErrors.AlreadyTaken);

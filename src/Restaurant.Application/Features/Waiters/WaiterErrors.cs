@@ -14,11 +14,6 @@ public static class WaiterErrors
         "This order is taken by another waiter."
     );
 
-    public static readonly Error OrderNotFound = new(
-        "Waiter.OrderNotFound",
-        "Order not found."
-    );
-
     public static readonly Error OrderCompleted = new(
         "Waiter.OrderCompleted",
         "This order is completed."

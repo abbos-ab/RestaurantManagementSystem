@@ -7,7 +7,7 @@ namespace Restaurant.Application.Features.Payment.Commands;
 
 public sealed record DeletePaymentCommand(
     long Id
-) : ICommand;
+) : ICommand<bool>;
 
 // ReSharper disable once UnusedType.Global
 public sealed class DeletePaymentCommandValidator : AbstractValidator<DeletePaymentCommand>
@@ -20,7 +20,7 @@ public sealed class DeletePaymentCommandValidator : AbstractValidator<DeletePaym
     }
 }
 
-internal sealed class DeletePaymentCommandHandler : ICommandHandler<DeletePaymentCommand>
+internal sealed class DeletePaymentCommandHandler : ICommandHandler<DeletePaymentCommand, bool>
 {
     private readonly IPaymentRepository _paymentRepository;
 
@@ -29,7 +29,7 @@ internal sealed class DeletePaymentCommandHandler : ICommandHandler<DeletePaymen
         _paymentRepository = paymentRepository;
     }
 
-    public async Task Handle(DeletePaymentCommand request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(DeletePaymentCommand request, CancellationToken cancellationToken)
     {
         var payment = await _paymentRepository.GetByIdAsync(request.Id, cancellationToken);
 
@@ -39,5 +39,7 @@ internal sealed class DeletePaymentCommandHandler : ICommandHandler<DeletePaymen
         await _paymentRepository.DeleteAsync(payment, cancellationToken);
 
         await _paymentRepository.SaveChangesAsync(cancellationToken);
+        
+        return true;
     }
 }

@@ -33,7 +33,8 @@ internal sealed class MarkNotificationAsReadCommandHandler
         if (notification is null)
             throw new BusinessLogicException(NotificationErrors.NotFound);
 
-        if (notification.IsRead) throw new BusinessLogicException(NotificationErrors.AlreadyRead);
+        if (notification.IsRead) 
+            throw new BusinessLogicException(NotificationErrors.AlreadyRead);
 
         notification.IsRead = true;
         notification.UpdatedAt = _timeProvider.GetLocalDateTimeNowKindUtc();

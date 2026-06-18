@@ -1,4 +1,5 @@
 using FluentValidation;
+using Restaurant.Application.Features.Orders;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Application.Features.Users.Repositories;
 using Restaurant.Domain.Entities;
@@ -43,7 +44,7 @@ internal sealed class RejectOrderCommandHandler : ICommandHandler<RejectOrderCom
 
         var order = await _orderRepository.GetByIdAsync(request.OrderId, cancellationToken);
         if (order is null)
-            throw new BusinessLogicException(WaiterErrors.OrderNotFound);
+            throw new BusinessLogicException(OrderErrors.NotFound);
 
         if (order.Status == OrderStatus.Completed || order.Status == OrderStatus.Rejected)
         {
