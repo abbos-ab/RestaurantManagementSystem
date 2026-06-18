@@ -1,23 +1,22 @@
 using FluentValidation;
-using Restaurant.Application.Features.OrderHistories.Models;
 using Restaurant.Application.Features.OrderHistories.Repositories;
 using Restaurant.Domain.Entities;
-using Restaurant.Mediator.Helper.CQRS.Commands;
+using Restaurant.Mediator.Helper.Events;
 
-namespace Restaurant.Application.Features.OrderHistories.Commands;
+namespace Restaurant.Application.Features.OrderHistories.Events;
 
-public sealed record CreateOrderHistoryCommand(
+public sealed record CreateOrderHistoryEvent(
     long OrderId,
     OrderHistoryAction Action,
     string Description,
     long? UserId,
     long? OrderItemId
-) : ICommand<OrderHistoryDto>;
+) : IEvent;
 
 // ReSharper disable once UnusedType.Global
-public sealed class CreateOrderHistoryCommandValidator : AbstractValidator<CreateOrderHistoryCommand>
+public sealed class CreateOrderHistoryEventValidator : AbstractValidator<CreateOrderHistoryEvent>
 {
-    public CreateOrderHistoryCommandValidator()
+    public CreateOrderHistoryEventValidator()
     {
         RuleFor(x => x.OrderId)
             .GreaterThan(0)
@@ -28,23 +27,20 @@ public sealed class CreateOrderHistoryCommandValidator : AbstractValidator<Creat
     }
 }
 
-internal sealed class CreateOrderHistoryCommandHandler : ICommandHandler<CreateOrderHistoryCommand, OrderHistoryDto>
+internal sealed class CreateOrderHistoryEventHandler : IEventHandler<CreateOrderHistoryEvent>
 {
     private readonly IOrderHistoryRepository _historyRepository;
-    private readonly OrderHistoryMapper _historyMapper;
     private readonly TimeProvider _timeProvider;
 
-    public CreateOrderHistoryCommandHandler(
+    public CreateOrderHistoryEventHandler(
         IOrderHistoryRepository historyRepository,
-        OrderHistoryMapper historyMapper,
         TimeProvider timeProvider)
     {
         _historyRepository = historyRepository;
-        _historyMapper = historyMapper;
         _timeProvider = timeProvider;
     }
 
-    public async Task<OrderHistoryDto> Handle(CreateOrderHistoryCommand request, CancellationToken cancellationToken)
+    public async Task Handle(CreateOrderHistoryEvent request, CancellationToken cancellationToken)
     {
         var orderHistory = new OrderHistory
         {
@@ -57,7 +53,5 @@ internal sealed class CreateOrderHistoryCommandHandler : ICommandHandler<CreateO
         };
 
         await _historyRepository.AddAsync(orderHistory, cancellationToken);
-
-        return _historyMapper.Map(orderHistory);
     }
 }

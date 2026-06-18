@@ -1,9 +1,14 @@
 using FluentValidation;
+using MediatR;
 using Restaurant.Application.Features.Dishes;
 using Restaurant.Application.Features.Dishes.Repositories;
+using Restaurant.Application.Features.Dishes.Specifications;
 using Restaurant.Application.Features.Inventories;
 using Restaurant.Application.Features.Inventories.Repositories;
 using Restaurant.Application.Features.Inventories.Specifications;
+using Restaurant.Application.Features.Notifications.Commands;
+using Restaurant.Application.Features.Notifications.Events;
+using Restaurant.Application.Features.OrderHistories.Events;
 using Restaurant.Application.Features.Orders.Models;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Application.Features.Orders.Specifications;
@@ -14,8 +19,10 @@ using Restaurant.Mediator.Helper.Exceptions;
 
 namespace Restaurant.Application.Features.Orders.Commands;
 
-public sealed record CreateOrderItemsCommand(long OrderId, List<CreateOrderItemDto> Items)
-    : ICommand<bool>;
+public sealed record CreateOrderItemsCommand(
+    long OrderId,
+    List<CreateOrderItemDto> Items
+) : ICommand<bool>;
 
 // ReSharper disable once UnusedType.Global
 public sealed class CreateOrderItemCommandValidator : AbstractValidator<CreateOrderItemsCommand>
@@ -38,19 +45,22 @@ internal sealed class CreateOrderItemCommandHandler : ICommandHandler<CreateOrde
     private readonly IDishRepository _dishRepository;
     private readonly IInventoryRepository _inventoryRepository;
     private readonly TimeProvider _timeProvider;
+    private readonly IMediator _mediator;
 
     public CreateOrderItemCommandHandler(
         IOrderRepository orderRepository,
         IOrderItemRepository orderItemRepository,
         IDishRepository dishRepository,
         IInventoryRepository inventoryRepository,
-        TimeProvider timeProvider)
+        TimeProvider timeProvider,
+        IMediator mediator)
     {
         _orderRepository = orderRepository;
         _orderItemRepository = orderItemRepository;
         _dishRepository = dishRepository;
         _inventoryRepository = inventoryRepository;
         _timeProvider = timeProvider;
+        _mediator = mediator;
     }
 
     public async Task<bool> Handle(CreateOrderItemsCommand request, CancellationToken cancellationToken)
@@ -63,17 +73,27 @@ internal sealed class CreateOrderItemCommandHandler : ICommandHandler<CreateOrde
             throw new BusinessLogicException(OrderErrors.NotFound);
 
         decimal total = 0;
+        List<OrderItem> newOrderItems = new List<OrderItem>();
+        List<OrderItem> oldOrderItems = new List<OrderItem>();
+
+        var dishIds = request.Items.Select(c => c.DishId).ToList();
+
+        var dishesSpec = new DishesByDishIdsSpec(dishIds);
+        var inventoriesSpec = new InventoriesByDishIdsSpec(dishIds);
+        var orderItemsSpec = new OrderItemByOrderIdAndDishIdSpec(request.OrderId, dishIds);
+
+        var dishes = await _dishRepository.ListAsync(dishesSpec, cancellationToken);
+        var inventories = await _inventoryRepository.ListAsync(inventoriesSpec, cancellationToken);
+        var orderItems = await _orderItemRepository.ListAsync(orderItemsSpec, cancellationToken);
 
         foreach (var item in request.Items)
         {
-            var dish = await _dishRepository.GetByIdAsync(item.DishId, cancellationToken);
+            var dish = dishes.FirstOrDefault(x => x.Id == item.DishId);
 
             if (dish is null)
                 throw new BusinessLogicException(DishErrors.NotFound);
 
-            var inventoryByDishIdSpec = new InventoryByDishIdSpec(item.DishId);
-            var dishInventory =
-                await _inventoryRepository.FirstOrDefaultAsync(inventoryByDishIdSpec, cancellationToken);
+            var dishInventory = inventories.FirstOrDefault(x => x.DishId == item.DishId);
 
             if (dishInventory is null)
                 throw new BusinessLogicException(InventoryErrors.NotFound);
@@ -81,8 +101,7 @@ internal sealed class CreateOrderItemCommandHandler : ICommandHandler<CreateOrde
             if (dishInventory.Quantity < item.Quantity)
                 throw new ResourceNotFoundException(InventoryErrors.OutOfStock);
 
-            var orderItemByDishIdSpec = new OrderItemByOrderIdAndDishIdSpec(request.OrderId, item.DishId);
-            var orderItem = await _orderItemRepository.FirstOrDefaultAsync(orderItemByDishIdSpec, cancellationToken);
+            var orderItem = orderItems.FirstOrDefault(x => x.DishId == item.DishId);
 
             if (orderItem is null)
             {
@@ -91,7 +110,8 @@ internal sealed class CreateOrderItemCommandHandler : ICommandHandler<CreateOrde
                     OrderId = order.Id,
                     DishId = item.DishId,
                     Quantity = item.Quantity,
-                    TotalPrice = isDiscountable ? ((dish.Price * item.Quantity) / 100) * 80 : dish.Price * item.Quantity,
+                    TotalPrice =
+                        isDiscountable ? ((dish.Price * item.Quantity) / 100) * 80 : dish.Price * item.Quantity,
                     Status = OrderItemStatus.Pending,
                     CreatedAt = _timeProvider.GetLocalDateTimeNowKindUtc(),
                 };
@@ -99,7 +119,7 @@ internal sealed class CreateOrderItemCommandHandler : ICommandHandler<CreateOrde
                 total += item.Quantity * dish.Price;
 
                 dishInventory.Quantity -= item.Quantity;
-                await _orderItemRepository.AddAsync(newOrderItem, cancellationToken);
+                newOrderItems.Add(newOrderItem);
             }
             else
             {
@@ -111,16 +131,36 @@ internal sealed class CreateOrderItemCommandHandler : ICommandHandler<CreateOrde
                 total += item.Quantity * dish.Price;
 
                 dishInventory.Quantity -= item.Quantity;
-                await _orderItemRepository.UpdateAsync(orderItem, cancellationToken);
+                oldOrderItems.Add(orderItem);
             }
         }
 
         order.TotalPrice += total;
 
         await _inventoryRepository.SaveChangesAsync(cancellationToken);
+        await _orderItemRepository.AddRangeAsync(newOrderItems, cancellationToken);
+        await _orderItemRepository.UpdateRangeAsync(oldOrderItems, cancellationToken);
         await _orderItemRepository.SaveChangesAsync(cancellationToken);
         await _orderRepository.SaveChangesAsync(cancellationToken);
 
+        await _mediator.Publish(new CreateNotificationEvent(
+                order.WaiterId,
+                NotificationType.OrderCreated,
+                order.Id,
+                "Order created"
+            ),
+            cancellationToken
+        );
+
+        await _mediator.Publish(new CreateOrderHistoryEvent(
+                order.Id,
+                OrderHistoryAction.Created,
+                "Order created",
+                order.WaiterId,
+                null
+            ),
+            cancellationToken);
+        
         return true;
     }
 }

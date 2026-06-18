@@ -7,6 +7,8 @@ using Restaurant.Application.Features.Inventories;
 using Restaurant.Application.Features.Inventories.Repositories;
 using Restaurant.Application.Features.Inventories.Specifications;
 using Restaurant.Application.Features.Notifications.Commands;
+using Restaurant.Application.Features.Notifications.Events;
+using Restaurant.Application.Features.OrderHistories.Events;
 using Restaurant.Application.Features.Orders.Models;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Application.Features.Tables;
@@ -148,13 +150,22 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
         order.TotalPrice += total;
         await _orderRepository.SaveChangesAsync(cancellationToken);
 
-        await _mediator.Send(new CreateNotificationCommand(
+        await _mediator.Publish(new CreateNotificationEvent(
                 null,
                 NotificationType.OrderCreated,
                 order.Id,
                 "Order created"),
             cancellationToken
         );
+
+        await _mediator.Publish(new CreateOrderHistoryEvent(
+                order.Id,
+                OrderHistoryAction.Created,
+                "Order created",
+                order.WaiterId,
+                null
+            ),
+            cancellationToken);
 
         return _mapper.Map(order);
     }

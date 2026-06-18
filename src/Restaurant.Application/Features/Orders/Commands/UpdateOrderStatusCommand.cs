@@ -1,4 +1,8 @@
 using FluentValidation;
+using MediatR;
+using Restaurant.Application.Features.Notifications.Commands;
+using Restaurant.Application.Features.Notifications.Events;
+using Restaurant.Application.Features.OrderHistories.Events;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.Common.Extensions;
@@ -29,13 +33,16 @@ internal sealed class UpdateOrderStatusCommandHandler : ICommandHandler<UpdateOr
 {
     private readonly IOrderRepository _orderRepository;
     private readonly TimeProvider _timeProvider;
+    private readonly IMediator _mediator;
 
     public UpdateOrderStatusCommandHandler(
         IOrderRepository orderRepository, 
-        TimeProvider timeProvider)
+        TimeProvider timeProvider, 
+        IMediator mediator)
     {
         _orderRepository = orderRepository;
         _timeProvider = timeProvider;
+        _mediator = mediator;
     }
 
     public async Task<bool> Handle(UpdateOrderStatusCommand request, CancellationToken cancellationToken)
@@ -50,6 +57,24 @@ internal sealed class UpdateOrderStatusCommandHandler : ICommandHandler<UpdateOr
 
         await _orderRepository.UpdateAsync(order, cancellationToken);
 
+        await _mediator.Publish(new CreateNotificationEvent(
+                order.WaiterId,
+                NotificationType.OrderStatusUpdated,
+                order.Id,
+                "Order status updated"
+            ),
+            cancellationToken
+        );
+        
+        await _mediator.Publish(new CreateOrderHistoryEvent(
+                order.Id,
+                OrderHistoryAction.StatusChanged,
+                "Order status changed",
+                order.WaiterId,
+                null
+            ),
+            cancellationToken);
+        
         return true;
     }
 }

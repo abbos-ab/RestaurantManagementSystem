@@ -4,12 +4,12 @@ public sealed class Notification : BaseEntity
 {
     public long? UserId { get; set; }
     public User? User { get; set; }
-    
-    public NotificationType Type { get; set; } 
+
+    public NotificationType Type { get; set; }
 
     public long? OrderId { get; set; }
     public Order? Order { get; set; }
-    
+
     public string? Message { get; set; }
 
     public bool IsRead { get; set; } = false;
@@ -18,22 +18,25 @@ public sealed class Notification : BaseEntity
 public enum NotificationType
 {
     // Order
-    OrderCreated,         
-    OrderUpdated,         
-    OrderCancelled,       
-    
+    OrderCreated,
+    OrderUpdated,
+    OrderCancelled,
+
     // Prepare
-    OrderPreparing,       
-    OrderReady,           
-    
+    OrderPreparing,
+    OrderReady,
+
     // Service
-    OrderServed,          
-    
+    OrderServed,
+
     // Table
-    TableCalledWaiter,    
-    TableChanged,         
-    
+    TableCalledWaiter,
+    TableChanged,
+
     // Payment
-    PaymentRequested,     
-    PaymentCompleted,     
+    PaymentRequested,
+    PaymentCompleted,
+
+    OrderItemStatusUpdated,
+    OrderStatusUpdated,
 }

@@ -1,5 +1,10 @@
 using FluentValidation;
+using MediatR;
+using Restaurant.Application.Features.Notifications.Commands;
+using Restaurant.Application.Features.Notifications.Events;
+using Restaurant.Application.Features.OrderHistories.Events;
 using Restaurant.Application.Features.Orders.Repositories;
+using Restaurant.Application.Features.Orders.Specifications;
 using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
@@ -27,11 +32,16 @@ internal class DeleteOrderItemsCommandHandler : ICommandHandler<DeleteOrderItems
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IOrderItemRepository _orderItemRepository;
+    private readonly IMediator _mediator;
 
-    public DeleteOrderItemsCommandHandler(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository)
+    public DeleteOrderItemsCommandHandler(
+        IOrderRepository orderRepository,
+        IOrderItemRepository orderItemRepository,
+        IMediator mediator)
     {
         _orderRepository = orderRepository;
         _orderItemRepository = orderItemRepository;
+        _mediator = mediator;
     }
 
     public async Task<bool> Handle(DeleteOrderItemsCommand request, CancellationToken cancellationToken)
@@ -40,23 +50,45 @@ internal class DeleteOrderItemsCommandHandler : ICommandHandler<DeleteOrderItems
         if (order is null)
             throw new BusinessLogicException(OrderErrors.NotFound);
 
-        List<OrderItem> orderItems = new List<OrderItem>();
-
+        List<OrderItem> orderItemsForDelete = new List<OrderItem>();
+        
+        var orderItemsSpec = new OrderItemsByOrderItemIdsSpec(request.OrderItemsIds);
+        var orderItems = await _orderItemRepository.ListAsync(orderItemsSpec, cancellationToken);
+        
         foreach (var item in request.OrderItemsIds)
         {
-            var orderItem = await _orderItemRepository.GetByIdAsync(item, cancellationToken);
+            var orderItem = orderItems.FirstOrDefault(x => x.Id == item);
             if (orderItem is null)
                 throw new BusinessLogicException(OrderItemErrors.NotFound);
 
             if (orderItem.Status != OrderItemStatus.Preparing && orderItem.Status != OrderItemStatus.Pending)
                 throw new BusinessLogicException(OrderItemErrors.OrderCompleted);
 
-            orderItems.Add(orderItem);
+            orderItemsForDelete.Add(orderItem);
         }
 
-        await _orderItemRepository.DeleteRangeAsync(orderItems, cancellationToken);
+        await _orderItemRepository.DeleteRangeAsync(orderItemsForDelete, cancellationToken);
 
         await _orderItemRepository.SaveChangesAsync(cancellationToken);
+
+        await _mediator.Publish(new CreateNotificationEvent(
+                order.WaiterId,
+                NotificationType.OrderCancelled,
+                order.Id,
+                "Order cancelled"
+            ),
+            cancellationToken
+        );
+
+        await _mediator.Publish(new CreateOrderHistoryEvent(
+                order.Id,
+                OrderHistoryAction.Created,
+                "Order created",
+                order.WaiterId,
+                null
+            ),
+            cancellationToken);
+        
         return true;
     }
 }
