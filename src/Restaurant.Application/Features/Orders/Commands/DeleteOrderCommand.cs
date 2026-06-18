@@ -1,4 +1,8 @@
 using FluentValidation;
+using MediatR;
+using Restaurant.Application.Features.Notifications.Commands;
+using Restaurant.Application.Features.Notifications.Events;
+using Restaurant.Application.Features.OrderHistories.Events;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Application.Features.Orders.Specifications;
 using Restaurant.Domain.Entities;
@@ -27,10 +31,12 @@ public sealed class DeleteOrderCommandValidator : AbstractValidator<DeleteOrderC
 internal sealed class DeleteOrderCommandHandler : ICommandHandler<DeleteOrderCommand, bool>
 {
     private readonly IOrderRepository _orderRepository;
+    private readonly IMediator _mediator;
 
-    public DeleteOrderCommandHandler(IOrderRepository orderRepository)
+    public DeleteOrderCommandHandler(IOrderRepository orderRepository, IMediator mediator)
     {
         _orderRepository = orderRepository;
+        _mediator = mediator;
     }
 
     public async Task<bool> Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
@@ -45,6 +51,25 @@ internal sealed class DeleteOrderCommandHandler : ICommandHandler<DeleteOrderCom
             throw new BusinessLogicException(OrderErrors.CannotDeleteCompletedOrder);
 
         await _orderRepository.DeleteAsync(order, cancellationToken);
+
+        await _mediator.Publish(new CreateNotificationEvent(
+                order.WaiterId,
+                NotificationType.OrderCancelled,
+                order.Id,
+                "Order cancelled"
+            ),
+            cancellationToken
+        );
+
+        await _mediator.Publish(new CreateOrderHistoryEvent(
+                order.Id,
+                OrderHistoryAction.Cancelled,
+                "Order cancelled",
+                order.WaiterId,
+                null
+            ),
+            cancellationToken);
+        
         return true;
     }
 }

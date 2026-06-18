@@ -1,4 +1,8 @@
 using FluentValidation;
+using MediatR;
+using Restaurant.Application.Features.Notifications.Commands;
+using Restaurant.Application.Features.Notifications.Events;
+using Restaurant.Application.Features.OrderHistories.Events;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.Common.Extensions;
@@ -26,14 +30,20 @@ public class UpdateOrderItemStatusCommandValidator : AbstractValidator<UpdateOrd
 internal sealed class UpdateOrderItemStatusCommandHandler : ICommandHandler<UpdateOrderItemStatusCommand, bool>
 {
     private readonly IOrderItemRepository _orderItemRepository;
+    private readonly IOrderRepository _orderRepository;
     private readonly TimeProvider _timeProvider;
+    private readonly IMediator _mediator;
 
     public UpdateOrderItemStatusCommandHandler(
         IOrderItemRepository orderItemRepository,
-        TimeProvider timeProvider)
+        TimeProvider timeProvider,
+        IMediator mediator,
+        IOrderRepository orderRepository)
     {
         _orderItemRepository = orderItemRepository;
         _timeProvider = timeProvider;
+        _mediator = mediator;
+        _orderRepository = orderRepository;
     }
 
     public async Task<bool> Handle(UpdateOrderItemStatusCommand request, CancellationToken cancellationToken)
@@ -52,7 +62,27 @@ internal sealed class UpdateOrderItemStatusCommandHandler : ICommandHandler<Upda
         if (request.Status == OrderItemStatus.Served)
             item.ServedAt = _timeProvider.GetLocalDateTimeNowKindUtc();
 
+        var order = await _orderRepository.GetByIdAsync(item.OrderId, cancellationToken);
+
         await _orderItemRepository.UpdateAsync(item, cancellationToken);
+
+        await _mediator.Publish(new CreateNotificationEvent(
+                order.WaiterId,
+                NotificationType.OrderItemStatusUpdated,
+                order.Id,
+                "Order created"
+            ),
+            cancellationToken
+        );
+
+        await _mediator.Publish(new CreateOrderHistoryEvent(
+                order.Id,
+                OrderHistoryAction.StatusChanged,
+                "Order item status changed",
+                order.WaiterId,
+                null
+            ),
+            cancellationToken);
 
         return true;
     }

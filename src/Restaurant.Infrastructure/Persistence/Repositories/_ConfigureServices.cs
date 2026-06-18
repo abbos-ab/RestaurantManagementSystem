@@ -8,6 +8,7 @@ using Restaurant.Application.Features.Medias.Repositories;
 using Restaurant.Application.Features.Notifications.Repositories;
 using Restaurant.Application.Features.OrderHistories.Repositories;
 using Restaurant.Application.Features.Orders.Repositories;
+using Restaurant.Application.Features.Payment.Repositories;
 using Restaurant.Application.Features.Review.Repositories;
 using Restaurant.Application.Features.Tables.Repositories;
 using Restaurant.Application.Features.Users.Repositories;
@@ -39,6 +40,7 @@ public static class ConfigureServices
         services.AddScoped<IDishMediaRepository, DishMediaRepository>();
         services.AddScoped<IDishMediaRelationRepository, DishMediaRelationRepository>();
         services.AddScoped<IReviewRepository, ReviewRepositories>();
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
         
         return services;
     }

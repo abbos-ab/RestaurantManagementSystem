@@ -1,9 +1,13 @@
 ﻿using FluentValidation;
+using MediatR;
 using Restaurant.Application.Features.Dishes;
 using Restaurant.Application.Features.Dishes.Repositories;
 using Restaurant.Application.Features.Inventories;
 using Restaurant.Application.Features.Inventories.Repositories;
 using Restaurant.Application.Features.Inventories.Specifications;
+using Restaurant.Application.Features.Notifications.Commands;
+using Restaurant.Application.Features.Notifications.Events;
+using Restaurant.Application.Features.OrderHistories.Events;
 using Restaurant.Application.Features.Orders.Models;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Application.Features.Orders.Specifications;
@@ -38,6 +42,7 @@ internal sealed class UpdateOrderItemCommandHandler : ICommandHandler<UpdateOrde
     private readonly IDishRepository _dishRepository;
     private readonly TimeProvider _timeProvider;
     private readonly OrderItemMapper _mapper;
+    private readonly IMediator _mediator;
 
     public UpdateOrderItemCommandHandler(
         IOrderItemRepository orderItemRepository,
@@ -45,7 +50,8 @@ internal sealed class UpdateOrderItemCommandHandler : ICommandHandler<UpdateOrde
         IInventoryRepository inventoryRepository,
         IDishRepository dishRepository,
         TimeProvider timeProvider,
-        OrderItemMapper mapper)
+        OrderItemMapper mapper,
+        IMediator mediator)
     {
         _orderItemRepository = orderItemRepository;
         _orderRepository = orderRepository;
@@ -53,6 +59,7 @@ internal sealed class UpdateOrderItemCommandHandler : ICommandHandler<UpdateOrde
         _dishRepository = dishRepository;
         _timeProvider = timeProvider;
         _mapper = mapper;
+        _mediator = mediator;
     }
 
     public async Task<OrderItemDto> Handle(UpdateOrderItemCommand request, CancellationToken cancellationToken)
@@ -79,7 +86,7 @@ internal sealed class UpdateOrderItemCommandHandler : ICommandHandler<UpdateOrde
             throw new BusinessLogicException(DishErrors.NotFound);
 
         var deference = orderItem.Quantity - request.Item.Quantity;
-        
+
         if (orderItem.Status == OrderItemStatus.Pending || orderItem.Status == OrderItemStatus.Preparing)
         {
             orderItem.Quantity = request.Item.Quantity;
@@ -92,6 +99,25 @@ internal sealed class UpdateOrderItemCommandHandler : ICommandHandler<UpdateOrde
             await _orderRepository.UpdateAsync(order, cancellationToken);
             await _orderItemRepository.UpdateAsync(orderItem, cancellationToken);
             await _inventoryRepository.UpdateAsync(dishInventory, cancellationToken);
+            
+            await _mediator.Publish(new CreateNotificationEvent(
+                    order.WaiterId,
+                    NotificationType.OrderUpdated,
+                    order.Id,
+                    "Order updated"
+                ),
+                cancellationToken
+            );
+            
+            await _mediator.Publish(new CreateOrderHistoryEvent(
+                    order.Id,
+                    OrderHistoryAction.ItemChanged,
+                    "Order created",
+                    order.WaiterId,
+                    orderItem.Id
+                ),
+                cancellationToken);
+            
             return _mapper.Map(orderItem);
         }
         else

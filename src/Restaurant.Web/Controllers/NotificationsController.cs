@@ -4,6 +4,7 @@ using Restaurant.Application.Features.Notifications.Commands;
 using Restaurant.Application.Features.Notifications.Models;
 using Restaurant.Application.Features.Notifications.Queries;
 using Restaurant.Mediator.Helper.Common.Models;
+using Restaurant.Mediator.Helper.Groups;
 
 namespace Restaurant.Web.Controllers;
 
@@ -13,14 +14,6 @@ public class NotificationsController : BaseController
     {
     }
 
-    [HttpPost]
-    public async Task<ActionResult<NotificationDto>> Create(
-        CreateNotificationCommand command,
-        CancellationToken cancellationToken = default)
-    {
-        return Ok(await _mediator.Send(command, cancellationToken));
-    }
-
     [HttpPut]
     public async Task<ActionResult<NotificationDto>> Update(
         UpdateNotificationCommand command,
@@ -28,8 +21,9 @@ public class NotificationsController : BaseController
     {
         return Ok(await _mediator.Send(command, cancellationToken));
     }
-
+    
     [HttpDelete("{notificationId:long}")]
+    [GroupAuthorize(GroupNames.Administrators)]
     public async Task<IActionResult> Delete(
         long notificationId,
         CancellationToken cancellationToken = default)

@@ -13,14 +13,6 @@ public class OrderHistoriesController : BaseController
     {
     }
 
-    [HttpPost]
-    public async Task<ActionResult<OrderHistoryDto>> Create(
-        CreateOrderHistoryCommand command,
-        CancellationToken cancellationToken = default)
-    {
-        return Ok(await _mediator.Send(command, cancellationToken));
-    }
-
     [HttpPut]
     public async Task<ActionResult<OrderHistoryDto>> Update(
         UpdateOrderHistoryCommand command,

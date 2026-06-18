@@ -1,23 +1,22 @@
 using FluentValidation;
-using Restaurant.Application.Features.Notifications.Models;
 using Restaurant.Application.Features.Notifications.Repositories;
 using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.Common.Extensions;
-using Restaurant.Mediator.Helper.CQRS.Commands;
+using Restaurant.Mediator.Helper.Events;
 
-namespace Restaurant.Application.Features.Notifications.Commands;
+namespace Restaurant.Application.Features.Notifications.Events;
 
-public sealed record CreateNotificationCommand(
-    long UserId,
+public sealed record CreateNotificationEvent(
+    long? UserId,
     NotificationType Type,
-    long? OrderId,
+    long OrderId,
     string? Message
-) : ICommand<NotificationDto>;
+) : IEvent;
 
 // ReSharper disable once UnusedType.Global
-public sealed class CreateNotificationCommandValidator : AbstractValidator<CreateNotificationCommand>
+public sealed class CreateNotificationEventValidator : AbstractValidator<CreateNotificationEvent>
 {
-    public CreateNotificationCommandValidator()
+    public CreateNotificationEventValidator()
     {
         RuleFor(x => x.UserId)
             .GreaterThan(0);
@@ -28,23 +27,21 @@ public sealed class CreateNotificationCommandValidator : AbstractValidator<Creat
     }
 }
 
-internal sealed class CreateNotificationCommandHandler : ICommandHandler<CreateNotificationCommand, NotificationDto>
+internal sealed class CreateNotificationEventHandler : IEventHandler<CreateNotificationEvent>
 {
     private readonly INotificationRepository _notificationRepository;
-    private readonly NotificationMapper _notificationMapper;
     private readonly TimeProvider _timeProvider;
 
-    public CreateNotificationCommandHandler(
+    public CreateNotificationEventHandler(
         INotificationRepository notificationRepository,
         NotificationMapper notificationMapper,
         TimeProvider timeProvider)
     {
         _notificationRepository = notificationRepository;
-        _notificationMapper = notificationMapper;
         _timeProvider = timeProvider;
     }
 
-    public async Task<NotificationDto> Handle(CreateNotificationCommand request, CancellationToken cancellationToken)
+    public async Task Handle(CreateNotificationEvent request, CancellationToken cancellationToken)
     {
         var notification = new Notification
         {
@@ -58,7 +55,5 @@ internal sealed class CreateNotificationCommandHandler : ICommandHandler<CreateN
         };
 
         await _notificationRepository.AddAsync(notification, cancellationToken);
-
-        return _notificationMapper.Map(notification);
     }
 }

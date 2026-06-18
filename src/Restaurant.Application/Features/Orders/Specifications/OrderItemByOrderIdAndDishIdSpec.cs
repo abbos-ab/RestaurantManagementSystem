@@ -6,18 +6,16 @@ namespace Restaurant.Application.Features.Orders.Specifications;
 public class OrderItemByOrderIdAndDishIdSpec : Specification<OrderItem>
 {
     public long OrderId { get; set; }
-    public long DishId { get; set; }
+    public List<long> DishIds { get; set; }
 
-    public OrderItemByOrderIdAndDishIdSpec(long orderId, long dishId, bool asNoTracking = false)
+    public OrderItemByOrderIdAndDishIdSpec(long orderId, List<long> dishIds, bool asNoTracking = false)
     {
         OrderId = orderId;
-        DishId = dishId;
+        DishIds = dishIds;
 
         if (asNoTracking)
             Query.AsNoTracking();
 
-        Query.Where(x =>
-            x.OrderId == orderId &&
-            x.DishId == dishId);
+        Query.Where(x => x.OrderId == orderId && dishIds.Contains(x.DishId));
     }
 }
