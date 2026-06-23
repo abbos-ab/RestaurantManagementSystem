@@ -25,32 +25,7 @@ public static class ConfigureServices
         var rabbitSettings = configuration.GetRequiredSection(nameof(RabbitMqSettings));
         services.Configure<RabbitMqSettings>(rabbitSettings);
 
-        services.AddMassTransit(x =>
-        {
-            var rabbit = rabbitSettings.Get<RabbitMqSettings>()!;
-
-            x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("notification", false));
-
-            x.AddConsumer<OrderPlacedConsumer>();
-            x.AddConsumer<OrderCancelledConsumer>();
-            x.AddConsumer<OrderUpdateConsumer>();
-            x.AddConsumer<PaymentRequestedConsumer>();
-            x.AddConsumer<PaymentStatusUpdatedConsumer>();
-            x.AddConsumer<TableCalledWaiterConsumer>();
-
-            x.UsingRabbitMq((context, cfg) =>
-            {
-                cfg.Host(rabbit.Host, rabbit.VirtualHost, h =>
-                {
-                    h.Username(rabbit.Username);
-                    h.Password(rabbit.Password);
-                });
-
-                cfg.ConfigureEndpoints(context);
-
-                cfg.UseJsonSerializer();
-            });
-        });
+        services.AddMassTransitServices(configuration);
 
         return services;
     }
