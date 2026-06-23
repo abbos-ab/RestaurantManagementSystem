@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurant.Infrastructure.Jobs;
 using Restaurant.Infrastructure.Persistence;
+using Restaurant.Infrastructure.Producers;
 using Restaurant.Infrastructure.Services;
 
 namespace Restaurant.Infrastructure;
@@ -16,7 +17,8 @@ public static class ConfigureServices
         services
             .AddPersistenceServices(configuration, isDev)
             .AddJobServices(configuration)
-            .AddServices(configuration);
+            .AddServices(configuration)
+            .AddRabbitMqServices(configuration);
         
         return services;
     }

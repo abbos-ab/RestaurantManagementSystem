@@ -1,5 +1,13 @@
 <Solution>
+  <Folder Name="/services/" />
+  <Folder Name="/services/NotificationService/">
+    <Project Path="services/NotificationService/NotificationService.API/NotificationService.API.csproj" />
+    <Project Path="services/NotificationService/NotificationService.Application/NotificationService.Application.csproj" />
+    <Project Path="services/NotificationService/NotificationService.Domain/NotificationService.Domain.csproj" />
+    <Project Path="services/NotificationService/NotificationService.Infrastructure/NotificationService.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/shared/">
+    <Project Path="shared/Restaurant.Contracts/Restaurant.Contracts.csproj" />
     <Project Path="shared/Restaurant.Mediator.Helper/Restaurant.Mediator.Helper.csproj" />
   </Folder>
   <Folder Name="/src/">

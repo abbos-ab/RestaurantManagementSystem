@@ -17,6 +17,7 @@ public static class ConfigureServices
         
         services
             .AddScoped<IAccessTokenService, AccessTokenService>()
+            .AddScoped<IUserTokenProvider, UserTokenProvider>()
             .AddScoped<IRefreshTokenService, RefreshTokenService>();
         
         services.AddMappers();

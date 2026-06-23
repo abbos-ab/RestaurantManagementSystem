@@ -29,6 +29,7 @@ public class AuthController : BaseController
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]
+    [AllowAnonymous]
     public async Task<AuthenticateResponse> Authenticate([FromBody] AuthenticateCommand command)
     {
         return await _mediator.Send(command);

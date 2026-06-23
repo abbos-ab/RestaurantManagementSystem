@@ -1,4 +1,5 @@
 using FluentValidation;
+using MassTransit;
 using MediatR;
 using Restaurant.Application.Features.Dishes;
 using Restaurant.Application.Features.Dishes.Repositories;
@@ -6,13 +7,13 @@ using Restaurant.Application.Features.Dishes.Specifications;
 using Restaurant.Application.Features.Inventories;
 using Restaurant.Application.Features.Inventories.Repositories;
 using Restaurant.Application.Features.Inventories.Specifications;
-using Restaurant.Application.Features.Notifications.Commands;
 using Restaurant.Application.Features.Notifications.Events;
 using Restaurant.Application.Features.OrderHistories.Events;
 using Restaurant.Application.Features.Orders.Models;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Application.Features.Tables;
 using Restaurant.Application.Features.Tables.Repositories;
+using Restaurant.Contracts.Events;
 using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.Common.Extensions;
 using Restaurant.Mediator.Helper.CQRS.Commands;
@@ -49,6 +50,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
     private readonly TimeProvider _timeProvider;
     private readonly OrderMapper _mapper;
     private readonly IMediator _mediator;
+    private readonly IPublishEndpoint _publishEndpoint;
 
     public CreateOrderCommandHandler(
         IOrderRepository orderRepository,
@@ -57,7 +59,8 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
         TimeProvider timeProvider, OrderMapper mapper,
         ITableRepository tableRepository,
         IOrderItemRepository orderItemRepository,
-        IMediator mediator)
+        IMediator mediator,
+        IPublishEndpoint publishEndpoint)
     {
         _orderRepository = orderRepository;
         _dishRepository = dishRepository;
@@ -66,6 +69,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
         _tableRepository = tableRepository;
         _orderItemRepository = orderItemRepository;
         _mediator = mediator;
+        _publishEndpoint = publishEndpoint;
         _inventoryRepository = inventoryRepository;
     }
 
@@ -150,13 +154,13 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
         order.TotalPrice += total;
         await _orderRepository.SaveChangesAsync(cancellationToken);
 
-        await _mediator.Publish(new CreateNotificationEvent(
-                null,
-                NotificationType.OrderCreated,
-                order.Id,
-                "Order created"),
-            cancellationToken
-        );
+        await _publishEndpoint.Publish(new OrderPlacedEvent
+        {
+            OrderId = order.Id,
+            UserId = order.WaiterId,
+            CustomerName = "Abbos (Test Customer)",
+            TotalAmount = order.TotalPrice
+        }, cancellationToken);
 
         await _mediator.Publish(new CreateOrderHistoryEvent(
                 order.Id,
