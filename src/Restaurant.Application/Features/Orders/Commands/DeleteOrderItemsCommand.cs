@@ -1,11 +1,12 @@
 using FluentValidation;
+using MassTransit;
 using MediatR;
-using Restaurant.Application.Features.Notifications.Commands;
-using Restaurant.Application.Features.Notifications.Events;
 using Restaurant.Application.Features.OrderHistories.Events;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Application.Features.Orders.Specifications;
+using Restaurant.Contracts.Events;
 using Restaurant.Domain.Entities;
+using Restaurant.Mediator.Helper.Common.Extensions;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
 
@@ -33,15 +34,21 @@ internal class DeleteOrderItemsCommandHandler : ICommandHandler<DeleteOrderItems
     private readonly IOrderRepository _orderRepository;
     private readonly IOrderItemRepository _orderItemRepository;
     private readonly IMediator _mediator;
+    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly TimeProvider _timeProvider;
 
     public DeleteOrderItemsCommandHandler(
         IOrderRepository orderRepository,
         IOrderItemRepository orderItemRepository,
-        IMediator mediator)
+        IMediator mediator,
+        IPublishEndpoint publishEndpoint,
+        TimeProvider timeProvider)
     {
         _orderRepository = orderRepository;
         _orderItemRepository = orderItemRepository;
         _mediator = mediator;
+        _publishEndpoint = publishEndpoint;
+        _timeProvider = timeProvider;
     }
 
     public async Task<bool> Handle(DeleteOrderItemsCommand request, CancellationToken cancellationToken)
@@ -51,10 +58,10 @@ internal class DeleteOrderItemsCommandHandler : ICommandHandler<DeleteOrderItems
             throw new BusinessLogicException(OrderErrors.NotFound);
 
         List<OrderItem> orderItemsForDelete = new List<OrderItem>();
-        
+
         var orderItemsSpec = new OrderItemsByOrderItemIdsSpec(request.OrderItemsIds);
         var orderItems = await _orderItemRepository.ListAsync(orderItemsSpec, cancellationToken);
-        
+
         foreach (var item in request.OrderItemsIds)
         {
             var orderItem = orderItems.FirstOrDefault(x => x.Id == item);
@@ -71,14 +78,13 @@ internal class DeleteOrderItemsCommandHandler : ICommandHandler<DeleteOrderItems
 
         await _orderItemRepository.SaveChangesAsync(cancellationToken);
 
-        await _mediator.Publish(new CreateNotificationEvent(
-                order.WaiterId,
-                NotificationType.OrderCancelled,
-                order.Id,
-                "Order cancelled"
-            ),
-            cancellationToken
-        );
+        await _publishEndpoint.Publish(new OrderCancelledEvent
+        {
+            OrderId = order.Id,
+            UserId = order.WaiterId,
+            Reason = "Customer changed mind",
+            CancelledAt = _timeProvider.GetLocalDateTimeNowKindUtc()
+        }, cancellationToken);
 
         await _mediator.Publish(new CreateOrderHistoryEvent(
                 order.Id,
@@ -88,7 +94,7 @@ internal class DeleteOrderItemsCommandHandler : ICommandHandler<DeleteOrderItems
                 null
             ),
             cancellationToken);
-        
+
         return true;
     }
 }

@@ -12,12 +12,15 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddNotificationInfrastructureServices(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        bool isDev)
     {
         var connectionString = configuration.GetConnectionString("Hangfire");
 
         services.AddDbContext<NotificationDbContext>(options =>
             options.UseNpgsql(connectionString));
+
+        services.AddPersistenceServices(configuration, isDev);
 
         var rabbitSettings = configuration.GetRequiredSection(nameof(RabbitMqSettings));
         services.Configure<RabbitMqSettings>(rabbitSettings);
@@ -27,8 +30,13 @@ public static class ConfigureServices
             var rabbit = rabbitSettings.Get<RabbitMqSettings>()!;
 
             x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("notification", false));
-            
+
             x.AddConsumer<OrderPlacedConsumer>();
+            x.AddConsumer<OrderCancelledConsumer>();
+            x.AddConsumer<OrderUpdateConsumer>();
+            x.AddConsumer<PaymentRequestedConsumer>();
+            x.AddConsumer<PaymentStatusUpdatedConsumer>();
+            x.AddConsumer<TableCalledWaiterConsumer>();
 
             x.UsingRabbitMq((context, cfg) =>
             {
@@ -39,8 +47,8 @@ public static class ConfigureServices
                 });
 
                 cfg.ConfigureEndpoints(context);
-    
-                cfg.UseJsonSerializer(); 
+
+                cfg.UseJsonSerializer();
             });
         });
 

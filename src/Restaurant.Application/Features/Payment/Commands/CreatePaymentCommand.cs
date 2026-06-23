@@ -1,7 +1,5 @@
 using FluentValidation;
-using MediatR;
-using Restaurant.Application.Features.Notifications.Events;
-using Restaurant.Application.Features.OrderHistories.Events;
+using MassTransit;
 using Restaurant.Application.Features.Orders;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Application.Features.Payment.Models;
@@ -9,7 +7,9 @@ using Restaurant.Application.Features.Payment.Repositories;
 using Restaurant.Application.Features.Payment.Specifications;
 using Restaurant.Application.Features.Users.Repositories;
 using Restaurant.Application.Features.Waiters;
+using Restaurant.Contracts.Events;
 using Restaurant.Domain.Entities;
+using Restaurant.Mediator.Helper.Common.Extensions;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
 
@@ -43,19 +43,22 @@ internal sealed class CreatePaymentCommandHandler : ICommandHandler<CreatePaymen
     private readonly IPaymentRepository _paymentRepository;
     private readonly IOrderRepository _orderRepository;
     private readonly PaymentMapper _mapper;
-    private readonly IMediator _mediator;
+    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly TimeProvider _timeProvider;
 
     public CreatePaymentCommandHandler(
         IPaymentRepository paymentRepository,
         IOrderRepository orderRepository,
         IUserRepository userRepository,
         PaymentMapper mapper,
-        IMediator mediator)
+        IPublishEndpoint publishEndpoint,
+        TimeProvider timeProvider)
     {
         _paymentRepository = paymentRepository;
         _orderRepository = orderRepository;
         _mapper = mapper;
-        _mediator = mediator;
+        _publishEndpoint = publishEndpoint;
+        _timeProvider = timeProvider;
     }
 
     public async Task<PaymentDto> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
@@ -89,13 +92,14 @@ internal sealed class CreatePaymentCommandHandler : ICommandHandler<CreatePaymen
         await _paymentRepository.AddAsync(payment, cancellationToken);
         await _paymentRepository.SaveChangesAsync(cancellationToken);
 
-        await _mediator.Publish(new CreateNotificationEvent(
-                payment.WaiterId,
-                NotificationType.PaymentRequested,
-                payment.OrderId,
-                "Payment Created"),
-            cancellationToken
-        );
+        await _publishEndpoint.Publish(new PaymentRequestedEvent
+        {
+            OrderId = payment.OrderId,
+            WaiterId = payment.WaiterId,
+            Amount = payment.Amount,
+            Message = "Payment Created",
+            CreatedAt = _timeProvider.GetLocalDateTimeNowKindUtc()
+        }, cancellationToken);
 
         return _mapper.Map(payment);
     }

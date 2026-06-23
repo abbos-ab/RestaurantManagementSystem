@@ -1,16 +1,16 @@
 ﻿using FluentValidation;
+using MassTransit;
 using MediatR;
 using Restaurant.Application.Features.Dishes;
 using Restaurant.Application.Features.Dishes.Repositories;
 using Restaurant.Application.Features.Inventories;
 using Restaurant.Application.Features.Inventories.Repositories;
 using Restaurant.Application.Features.Inventories.Specifications;
-using Restaurant.Application.Features.Notifications.Commands;
-using Restaurant.Application.Features.Notifications.Events;
 using Restaurant.Application.Features.OrderHistories.Events;
 using Restaurant.Application.Features.Orders.Models;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Application.Features.Orders.Specifications;
+using Restaurant.Contracts.Events;
 using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.Common.Extensions;
 using Restaurant.Mediator.Helper.CQRS.Commands;
@@ -43,6 +43,7 @@ internal sealed class UpdateOrderItemCommandHandler : ICommandHandler<UpdateOrde
     private readonly TimeProvider _timeProvider;
     private readonly OrderItemMapper _mapper;
     private readonly IMediator _mediator;
+    private readonly IPublishEndpoint _publishEndpoint;
 
     public UpdateOrderItemCommandHandler(
         IOrderItemRepository orderItemRepository,
@@ -51,7 +52,8 @@ internal sealed class UpdateOrderItemCommandHandler : ICommandHandler<UpdateOrde
         IDishRepository dishRepository,
         TimeProvider timeProvider,
         OrderItemMapper mapper,
-        IMediator mediator)
+        IMediator mediator,
+        IPublishEndpoint publishEndpoint)
     {
         _orderItemRepository = orderItemRepository;
         _orderRepository = orderRepository;
@@ -60,6 +62,7 @@ internal sealed class UpdateOrderItemCommandHandler : ICommandHandler<UpdateOrde
         _timeProvider = timeProvider;
         _mapper = mapper;
         _mediator = mediator;
+        _publishEndpoint = publishEndpoint;
     }
 
     public async Task<OrderItemDto> Handle(UpdateOrderItemCommand request, CancellationToken cancellationToken)
@@ -99,16 +102,16 @@ internal sealed class UpdateOrderItemCommandHandler : ICommandHandler<UpdateOrde
             await _orderRepository.UpdateAsync(order, cancellationToken);
             await _orderItemRepository.UpdateAsync(orderItem, cancellationToken);
             await _inventoryRepository.UpdateAsync(dishInventory, cancellationToken);
-            
-            await _mediator.Publish(new CreateNotificationEvent(
-                    order.WaiterId,
-                    NotificationType.OrderUpdated,
-                    order.Id,
-                    "Order updated"
-                ),
-                cancellationToken
-            );
-            
+
+            await _publishEndpoint.Publish(new OrderUpdatedEvent
+            {
+                OrderId = order.Id,
+                UserId = order.WaiterId,
+                TotalAmount = order.TotalPrice,
+                UpdateDescription = "Order items were updated.",
+                UpdatedAt = _timeProvider.GetLocalDateTimeNowKindUtc()
+            }, cancellationToken);
+
             await _mediator.Publish(new CreateOrderHistoryEvent(
                     order.Id,
                     OrderHistoryAction.ItemChanged,
@@ -117,7 +120,7 @@ internal sealed class UpdateOrderItemCommandHandler : ICommandHandler<UpdateOrde
                     orderItem.Id
                 ),
                 cancellationToken);
-            
+
             return _mapper.Map(orderItem);
         }
         else

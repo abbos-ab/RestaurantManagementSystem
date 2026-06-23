@@ -1,10 +1,10 @@
 using FluentValidation;
-using Restaurant.Application.Features.Notifications.Repositories;
+using MassTransit;
 using Restaurant.Application.Features.Orders.Repositories;
 using Restaurant.Application.Features.Waiters.Specifications;
-using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
+using Restaurant.Contracts.Events;
 
 namespace Restaurant.Application.Features.Waiters.Commands;
 
@@ -24,12 +24,17 @@ public sealed class CallWaiterCommandValidator : AbstractValidator<CallWaiterCom
 internal sealed class CallWaiterCommandHandler : ICommandHandler<CallWaiterCommand, bool>
 {
     private readonly IOrderRepository _orderRepository;
-    private readonly INotificationRepository _notificationRepository;
+    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly TimeProvider _timeProvider;
 
-    public CallWaiterCommandHandler(IOrderRepository orderRepository, INotificationRepository notificationRepository)
+    public CallWaiterCommandHandler(
+        IOrderRepository orderRepository,
+        IPublishEndpoint publishEndpoint,
+        TimeProvider timeProvider)
     {
         _orderRepository = orderRepository;
-        _notificationRepository = notificationRepository;
+        _publishEndpoint = publishEndpoint;
+        _timeProvider = timeProvider;
     }
 
     public async Task<bool> Handle(CallWaiterCommand request, CancellationToken cancellationToken)
@@ -40,14 +45,13 @@ internal sealed class CallWaiterCommandHandler : ICommandHandler<CallWaiterComma
         if (waiter == null)
             throw new BusinessLogicException(WaiterErrors.NotFound);
 
-        Notification notification = new Notification
+        await _publishEndpoint.Publish(new TableCalledWaiterEvent
         {
-            UserId = waiter.Value,
-            Type = NotificationType.TableCalledWaiter,
-        };
+            TableId = request.TableId,
+            WaiterId = waiter.Value,
+            CalledAt = DateTime.UtcNow
+        }, cancellationToken);
 
-        await _notificationRepository.AddAsync(notification, cancellationToken);
-        await _notificationRepository.SaveChangesAsync(cancellationToken);
         return true;
     }
 }

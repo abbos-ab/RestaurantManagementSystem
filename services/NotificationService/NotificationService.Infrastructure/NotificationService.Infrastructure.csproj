@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="9.3.1" />
     <PackageReference Include="MassTransit" Version="9.1.2" />
     <PackageReference Include="MassTransit.Newtonsoft" Version="9.1.2" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="9.1.2" />
@@ -18,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\shared\Restaurant.Contracts\Restaurant.Contracts.csproj" />
     <ProjectReference Include="..\..\..\shared\Restaurant.Mediator.Helper\Restaurant.Mediator.Helper.csproj" />
+    <ProjectReference Include="..\NotificationService.Application\NotificationService.Application.csproj" />
     <ProjectReference Include="..\NotificationService.Domain\NotificationService.Domain.csproj" />
   </ItemGroup>
 

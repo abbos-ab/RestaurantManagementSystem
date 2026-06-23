@@ -1,9 +1,9 @@
 using FluentValidation;
+using MassTransit;
 using MediatR;
-using Restaurant.Application.Features.Notifications.Commands;
-using Restaurant.Application.Features.Notifications.Events;
 using Restaurant.Application.Features.OrderHistories.Events;
 using Restaurant.Application.Features.Orders.Repositories;
+using Restaurant.Contracts.Events;
 using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.Common.Extensions;
 using Restaurant.Mediator.Helper.CQRS.Commands;
@@ -34,15 +34,18 @@ internal sealed class UpdateOrderStatusCommandHandler : ICommandHandler<UpdateOr
     private readonly IOrderRepository _orderRepository;
     private readonly TimeProvider _timeProvider;
     private readonly IMediator _mediator;
+    private readonly IPublishEndpoint _publishEndpoint;
 
     public UpdateOrderStatusCommandHandler(
-        IOrderRepository orderRepository, 
-        TimeProvider timeProvider, 
-        IMediator mediator)
+        IOrderRepository orderRepository,
+        TimeProvider timeProvider,
+        IMediator mediator,
+        IPublishEndpoint publishEndpoint)
     {
         _orderRepository = orderRepository;
         _timeProvider = timeProvider;
         _mediator = mediator;
+        _publishEndpoint = publishEndpoint;
     }
 
     public async Task<bool> Handle(UpdateOrderStatusCommand request, CancellationToken cancellationToken)
@@ -57,15 +60,15 @@ internal sealed class UpdateOrderStatusCommandHandler : ICommandHandler<UpdateOr
 
         await _orderRepository.UpdateAsync(order, cancellationToken);
 
-        await _mediator.Publish(new CreateNotificationEvent(
-                order.WaiterId,
-                NotificationType.OrderStatusUpdated,
-                order.Id,
-                "Order status updated"
-            ),
-            cancellationToken
-        );
-        
+        await _publishEndpoint.Publish(new OrderUpdatedEvent
+        {
+            OrderId = order.Id,
+            UserId = order.WaiterId,
+            TotalAmount = order.TotalPrice,
+            UpdateDescription = "Order items were updated.",
+            UpdatedAt = _timeProvider.GetLocalDateTimeNowKindUtc()
+        }, cancellationToken);
+
         await _mediator.Publish(new CreateOrderHistoryEvent(
                 order.Id,
                 OrderHistoryAction.StatusChanged,
@@ -74,7 +77,7 @@ internal sealed class UpdateOrderStatusCommandHandler : ICommandHandler<UpdateOr
                 null
             ),
             cancellationToken);
-        
+
         return true;
     }
 }

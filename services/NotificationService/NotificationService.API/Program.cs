@@ -1,3 +1,4 @@
+using NotificationService.Application;
 using NotificationService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,7 +7,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddNotificationInfrastructureServices(builder.Configuration);
+builder.Services
+    .AddApplicationServices()
+    .AddNotificationInfrastructureServices(builder.Configuration, true);
 
 builder.Services.AddCors(options =>
 {

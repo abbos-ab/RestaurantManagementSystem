@@ -1,7 +1,6 @@
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NotificationService.Infrastructure.Consumers;
 using Restaurant.Mediator.Helper.Common.Settings;
 
 namespace Restaurant.Infrastructure.Producers;

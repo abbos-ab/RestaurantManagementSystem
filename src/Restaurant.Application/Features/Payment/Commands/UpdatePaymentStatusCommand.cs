@@ -1,10 +1,12 @@
 using FluentValidation;
+using MassTransit;
 using MediatR;
-using Restaurant.Application.Features.Notifications.Events;
 using Restaurant.Application.Features.OrderHistories.Events;
 using Restaurant.Application.Features.Payment.Models;
 using Restaurant.Application.Features.Payment.Repositories;
+using Restaurant.Contracts.Events;
 using Restaurant.Domain.Entities;
+using Restaurant.Mediator.Helper.Common.Extensions;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
 
@@ -30,13 +32,21 @@ internal sealed class UpdatePaymentStatusCommandHandler : ICommandHandler<Update
     private readonly IPaymentRepository _paymentRepository;
     private readonly PaymentMapper _mapper;
     private readonly IMediator _mediator;
+    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly TimeProvider _timeProvider;
 
-    public UpdatePaymentStatusCommandHandler(IPaymentRepository paymentRepository, PaymentMapper mapper,
-        IMediator mediator)
+    public UpdatePaymentStatusCommandHandler(
+        IPaymentRepository paymentRepository,
+        PaymentMapper mapper,
+        IMediator mediator,
+        IPublishEndpoint publishEndpoint,
+        TimeProvider timeProvider)
     {
         _paymentRepository = paymentRepository;
         _mapper = mapper;
         _mediator = mediator;
+        _publishEndpoint = publishEndpoint;
+        _timeProvider = timeProvider;
     }
 
     public async Task<PaymentDto> Handle(UpdatePaymentStatusCommand request, CancellationToken cancellationToken)
@@ -48,13 +58,15 @@ internal sealed class UpdatePaymentStatusCommandHandler : ICommandHandler<Update
         payment.Status = request.Status;
         await _paymentRepository.UpdateAsync(payment, cancellationToken);
 
-        await _mediator.Publish(new CreateNotificationEvent(
-                payment.WaiterId,
-                NotificationType.PaymentCompleted,
-                payment.OrderId,
-                "Order created"),
-            cancellationToken
-        );
+        await _publishEndpoint.Publish(new PaymentStatusUpdatedEvent
+        {
+            PaymentId = payment.Id,
+            OrderId = payment.OrderId,
+            WaiterId = payment.WaiterId,
+            Status = payment.Status.ToString(),
+            Message = $"Payment status updated to {payment.Status}.",
+            UpdatedAt = _timeProvider.GetLocalDateTimeNowKindUtc()
+        }, cancellationToken);
 
         await _mediator.Publish(new CreateOrderHistoryEvent(
                 payment.OrderId,

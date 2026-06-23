@@ -7,7 +7,6 @@ using Restaurant.Application.Features.Dishes.Specifications;
 using Restaurant.Application.Features.Inventories;
 using Restaurant.Application.Features.Inventories.Repositories;
 using Restaurant.Application.Features.Inventories.Specifications;
-using Restaurant.Application.Features.Notifications.Events;
 using Restaurant.Application.Features.OrderHistories.Events;
 using Restaurant.Application.Features.Orders.Models;
 using Restaurant.Application.Features.Orders.Repositories;
@@ -158,7 +157,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
         {
             OrderId = order.Id,
             UserId = order.WaiterId,
-            CustomerName = "Abbos (Test Customer)",
+            CustomerName = "TEST",
             TotalAmount = order.TotalPrice
         }, cancellationToken);
 

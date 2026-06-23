@@ -1,23 +1,16 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Restaurant.Application.Common.Extensions;
-using Restaurant.Application.Features.Authentications.Interfaces;
-using Restaurant.Application.Features.Authentications.Services;
+using NotificationService.Application.Common.Extensions;
 using Restaurant.Mediator.Helper.Behaviors;
 
-namespace Restaurant.Application;
+namespace NotificationService.Application;
 
 public static class ConfigureServices
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddSingleton(TimeProvider.System);
-        
-        services
-            .AddScoped<IAccessTokenService, AccessTokenService>()
-            .AddScoped<IUserTokenProvider, UserTokenProvider>()
-            .AddScoped<IRefreshTokenService, RefreshTokenService>();
         
         services.AddMappers();
 
