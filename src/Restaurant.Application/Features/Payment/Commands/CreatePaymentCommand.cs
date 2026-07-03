@@ -78,8 +78,7 @@ internal sealed class CreatePaymentCommandHandler : ICommandHandler<CreatePaymen
 
         if (request.Amount < order.TotalPrice)
             throw new ResourceNotFoundException(PaymentErrors.InvalidAmount);
-
-
+        
         var payment = new Domain.Entities.Payment
         {
             OrderId = request.OrderId,

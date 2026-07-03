@@ -10,6 +10,7 @@ using Restaurant.Application.Features.Inventories.Specifications;
 using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
+using Restaurant.Mediator.Helper.Persistence;
 
 namespace Restaurant.Application.Features.Carts.Commands;
 
@@ -35,17 +36,20 @@ internal sealed class CreateCartItemCommandHandler : ICommandHandler<CreateCartI
     private readonly ICartItemRepository _cartItemRepository;
     private readonly IDishRepository _dishRepository;
     private readonly IInventoryRepository _inventoryRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public CreateCartItemCommandHandler(
         ICartRepository cartRepository,
         ICartItemRepository cartItemRepository,
         IDishRepository dishRepository,
-        IInventoryRepository inventoryRepository)
+        IInventoryRepository inventoryRepository,
+        IUnitOfWork unitOfWork)
     {
         _cartRepository = cartRepository;
         _cartItemRepository = cartItemRepository;
         _dishRepository = dishRepository;
         _inventoryRepository = inventoryRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<bool> Handle(CreateCartItemCommand request, CancellationToken cancellationToken)
@@ -104,8 +108,7 @@ internal sealed class CreateCartItemCommandHandler : ICommandHandler<CreateCartI
 
         cart.TotalPrice += total;
 
-        await _cartItemRepository.SaveChangesAsync(cancellationToken);
-        await _cartRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return true;
     }

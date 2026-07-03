@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using NotificationService.Application.Notifications.Repositories;
+using NotificationService.Application.Features.Notifications.Repositories;
 using Restaurant.Mediator.Helper.Persistence;
 
 namespace NotificationService.Infrastructure.Persistence.Repositories;

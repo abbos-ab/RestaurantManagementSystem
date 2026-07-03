@@ -1,10 +1,10 @@
-using NotificationService.Application.Notifications.Models;
-using NotificationService.Application.Notifications.Repositories;
-using NotificationService.Application.Notifications.Specifications;
+using NotificationService.Application.Features.Notifications.Models;
+using NotificationService.Application.Features.Notifications.Repositories;
+using NotificationService.Application.Features.Notifications.Specifications;
 using Restaurant.Mediator.Helper.CQRS.Queries;
 using Restaurant.Mediator.Helper.Exceptions;
 
-namespace NotificationService.Application.Notifications.Queries;
+namespace NotificationService.Application.Features.Notifications.Queries;
 
 public sealed record GetNotificationByIdQuery(
     long Id

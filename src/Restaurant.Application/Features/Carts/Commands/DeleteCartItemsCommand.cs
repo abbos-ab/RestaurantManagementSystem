@@ -1,8 +1,11 @@
+using Ardalis.Specification;
 using FluentValidation;
 using Restaurant.Application.Features.Carts.Repositories;
 using Restaurant.Application.Features.Carts.Specifications;
+using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
+using Restaurant.Mediator.Helper.Persistence;
 
 namespace Restaurant.Application.Features.Carts.Commands;
 
@@ -35,22 +38,21 @@ internal sealed class DeleteCartItemsCommandHandler : ICommandHandler<DeleteCart
     public async Task<bool> Handle(DeleteCartItemsCommand request, CancellationToken cancellationToken)
     {
         var cart = await _cartRepository.GetByIdAsync(request.CartId, cancellationToken);
-        
+
         if (cart is null)
             throw new BusinessLogicException(CartErrors.NotFound);
 
-        foreach (var item in request.DishIds)
-        {
-            var spec = new CartItemByDishIdSpec(request.CartId, item);
-            var cartItem = await _cartItemRepository.FirstOrDefaultAsync(spec, cancellationToken);
+        var spec = new DbSpecification<CartItem>();
+        spec.Query.Where(x => request.DishIds.Contains(x.DishId));
 
-            if (cartItem is null)
-                throw new BusinessLogicException(CartItemErrors.NotFound);
+        var cartItems = await _cartItemRepository.ListAsync(spec, cancellationToken);
 
-            await _cartItemRepository.DeleteAsync(cartItem, cancellationToken);
-        }
+        if (!cartItems.Any())
+            throw new ResourceNotFoundException(CartItemErrors.NotFound);
 
+        await _cartItemRepository.DeleteRangeAsync(cartItems, cancellationToken);
         await _cartItemRepository.SaveChangesAsync(cancellationToken);
+
         return true;
     }
 }

@@ -41,8 +41,9 @@ internal sealed class UpdateDishPriceCommandHandler : ICommandHandler<UpdateDish
             throw new BusinessLogicException(DishErrors.NotFound);
 
         dish.Price = request.Price;
-        await _dishRepository.UpdateAsync(dish, cancellationToken);
-        
+
+        await _dishRepository.SaveChangesAsync(cancellationToken);
+
         return _dishMapper.Map(dish);
     }
 }

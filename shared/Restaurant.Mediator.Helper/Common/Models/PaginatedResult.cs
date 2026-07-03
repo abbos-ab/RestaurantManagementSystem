@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Restaurant.Mediator.Helper.Common.Models;
 
 /// <summary>

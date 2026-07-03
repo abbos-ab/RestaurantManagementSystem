@@ -1,5 +1,5 @@
 using Ardalis.Specification.EntityFrameworkCore;
-using NotificationService.Application.Notifications.Repositories;
+using NotificationService.Application.Features.Notifications.Repositories;
 using NotificationService.Domain.Entities;
 
 namespace NotificationService.Infrastructure.Persistence.Repositories;

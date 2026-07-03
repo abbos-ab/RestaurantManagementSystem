@@ -11,6 +11,7 @@ using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.Common.Extensions;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
+using Restaurant.Mediator.Helper.Persistence;
 
 namespace Restaurant.Application.Features.Carts.Commands;
 
@@ -40,6 +41,7 @@ internal sealed class CreateCartCommandHandler : ICommandHandler<CreateCartComma
     private readonly TimeProvider _timeProvider;
     private readonly IDishRepository _dishRepository;
     private readonly IInventoryRepository _inventoryRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly CartMapper _cartMapper;
 
     public CreateCartCommandHandler(
@@ -48,7 +50,8 @@ internal sealed class CreateCartCommandHandler : ICommandHandler<CreateCartComma
         TimeProvider timeProvider,
         IDishRepository dishRepository,
         IInventoryRepository inventoryRepository,
-        CartMapper cartMapper)
+        CartMapper cartMapper,
+        IUnitOfWork unitOfWork)
     {
         _cartRepository = cartRepository;
         _cartItemRepository = cartItemRepository;
@@ -56,6 +59,7 @@ internal sealed class CreateCartCommandHandler : ICommandHandler<CreateCartComma
         _dishRepository = dishRepository;
         _inventoryRepository = inventoryRepository;
         _cartMapper = cartMapper;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<CartDto> Handle(CreateCartCommand request, CancellationToken cancellationToken)
@@ -109,8 +113,8 @@ internal sealed class CreateCartCommandHandler : ICommandHandler<CreateCartComma
 
         cart.TotalPrice += total;
 
-        await _cartItemRepository.SaveChangesAsync(cancellationToken);
-        await _cartRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
         return _cartMapper.Map(cart);
     }
 }

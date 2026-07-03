@@ -1,9 +1,9 @@
-using NotificationService.Application.Notifications.Repositories;
-using NotificationService.Application.Notifications.Specifications;
+using NotificationService.Application.Features.Notifications.Repositories;
+using NotificationService.Application.Features.Notifications.Specifications;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
 
-namespace NotificationService.Application.Notifications.Commands;
+namespace NotificationService.Application.Features.Notifications.Commands;
 
 public sealed record MarkNotificationAsReadCommand(
     long Id

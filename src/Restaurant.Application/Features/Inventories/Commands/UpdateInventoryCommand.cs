@@ -20,14 +20,14 @@ public sealed class UpdateInventoryCommandValidator : AbstractValidator<UpdateIn
         RuleFor(x => x.Id)
             .GreaterThan(0)
             .WithMessage("Id must be greater than 0");
-        
+
         RuleFor(x => x.Quantity)
             .GreaterThanOrEqualTo(0)
             .WithMessage("Quantity must be greater or equal 0");
     }
 }
 
-internal sealed class UpdateInventoryCommandHandler 
+internal sealed class UpdateInventoryCommandHandler
     : ICommandHandler<UpdateInventoryCommand, InventoryDto>
 {
     private readonly IInventoryRepository _inventoryRepository;
@@ -49,7 +49,7 @@ internal sealed class UpdateInventoryCommandHandler
         inventory.Quantity = request.Quantity;
         inventory.UpdatedAt = _timeProvider.GetLocalDateTimeNowKindUtc();
 
-        await _inventoryRepository.UpdateAsync(inventory, cancellationToken);
+        await _inventoryRepository.SaveChangesAsync(cancellationToken);
 
         return new InventoryDto
         {

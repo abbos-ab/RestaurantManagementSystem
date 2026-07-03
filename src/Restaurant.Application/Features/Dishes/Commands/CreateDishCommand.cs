@@ -48,10 +48,10 @@ internal sealed class CreateDishCommandHandler : ICommandHandler<CreateDishComma
     {
         var spec = new DishByNameSpec(request.Name);
         var exists = await _dishRepository.AnyAsync(spec, cancellationToken);
-        
+
         if (exists)
             throw new BusinessLogicException(DishErrors.AlreadyExists);
-                
+
         var dish = new Dish
         {
             Name = request.Name,
@@ -63,6 +63,8 @@ internal sealed class CreateDishCommandHandler : ICommandHandler<CreateDishComma
         };
 
         await _dishRepository.AddAsync(dish, cancellationToken);
+        await _dishRepository.SaveChangesAsync(cancellationToken);
+        
 
         return _mapper.Map(dish);
     }

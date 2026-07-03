@@ -22,7 +22,7 @@ public sealed record AuthenticateCommand(
 // ReSharper disable once UnusedType.Global
 public sealed class AuthenticateCommandValidator : AbstractValidator<AuthenticateCommand>
 {
-    public AuthenticateCommandValidator()
+    public AuthenticateCommandValidator()                                                                                                                                                                                
     {
         RuleFor(x => x.PhoneNumber).SetValidator(new PhoneValidator());
         RuleFor(x => x.Password).NotEmpty();

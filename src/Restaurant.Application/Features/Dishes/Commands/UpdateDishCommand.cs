@@ -59,7 +59,7 @@ internal sealed class UpdateDishCommandHandler : ICommandHandler<UpdateDishComma
         dish.IsActive = request.IsActive;
         dish.UpdatedAt = _timeProvider.GetLocalDateTimeNowKindUtc();
 
-        await _dishRepository.UpdateAsync(dish, cancellationToken);
+        await _dishRepository.SaveChangesAsync(cancellationToken);
 
         return _mapper.Map(dish);
     }

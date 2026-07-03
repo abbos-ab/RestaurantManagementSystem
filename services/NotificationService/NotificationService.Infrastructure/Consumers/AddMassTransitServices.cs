@@ -11,7 +11,8 @@ internal static class ConfigureServices
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var rabbitSettings = configuration.GetRequiredSection(nameof(RabbitMqSettings));
+        var rabbitSettings =
+            configuration.GetRequiredSection(nameof(RabbitMqSettings));
         services.Configure<RabbitMqSettings>(rabbitSettings);
 
         services.AddMassTransit(
@@ -19,7 +20,9 @@ internal static class ConfigureServices
             {
                 var rabbit = rabbitSettings.Get<RabbitMqSettings>()!;
 
-                x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("notification", false));
+                x.SetEndpointNameFormatter(
+                    new KebabCaseEndpointNameFormatter(
+                        "notification", false));
 
                 x.AddConsumer<OrderPlacedConsumer>();
                 x.AddConsumer<OrderCancelledConsumer>();

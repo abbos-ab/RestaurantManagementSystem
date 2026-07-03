@@ -1,7 +1,7 @@
 using Ardalis.Specification;
 using NotificationService.Domain.Entities;
 
-namespace NotificationService.Application.Notifications.Specifications;
+namespace NotificationService.Application.Features.Notifications.Specifications;
 
 public sealed class UserNotificationsSpec : Specification<Notification>
 {

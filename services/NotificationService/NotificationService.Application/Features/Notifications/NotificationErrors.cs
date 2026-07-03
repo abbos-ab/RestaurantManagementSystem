@@ -1,6 +1,6 @@
 using Restaurant.Mediator.Helper.Common.Models;
 
-namespace NotificationService.Application.Notifications;
+namespace NotificationService.Application.Features.Notifications;
 
 public static class NotificationErrors
 {

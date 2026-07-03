@@ -4,7 +4,7 @@ using Restaurant.Application;
 using Restaurant.Domain.Entities;
 using Restaurant.Infrastructure;
 using Restaurant.Infrastructure.Persistence;
-using Restaurant.Infrastructure.Persistence.Repositories;
+using Restaurant.Mediator.Helper.Middlewares;
 using Restaurant.Web;
 using Restaurant.Web.Services;
 
@@ -22,6 +22,8 @@ builder.Services.AddHostedService<HangfireJobRegistrationService>();
 builder.Services.AddHostedService<MinioBucketBackgroundService>();
 
 builder.Services.AddDataProtection();
+
+builder.Services.AddScoped<CurrentUserMiddleware>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -60,6 +62,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<CurrentUserMiddleware>();
 
 app.MapControllers();
 

@@ -26,6 +26,11 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>705c4ce8-21f5-42f5-86b4-c0f078f92de9</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Restaurant.UnitTests" />
+  </ItemGroup>
+  
 </Project>

@@ -1,8 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using NotificationService.Application.Notifications.Commands;
-using NotificationService.Application.Notifications.Models;
-using NotificationService.Application.Notifications.Queries;
+using NotificationService.Application.Features.Notifications.Commands;
+using NotificationService.Application.Features.Notifications.Models;
+using NotificationService.Application.Features.Notifications.Queries;
 using Restaurant.Mediator.Helper.Common.Models;
 using Restaurant.Mediator.Helper.Groups;
 

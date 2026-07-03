@@ -1,5 +1,4 @@
-﻿
-using Restaurant.Mediator.Helper.Exceptions;
+﻿using Restaurant.Mediator.Helper.Exceptions;
 using System.Security.Claims;
 
 namespace Restaurant.Mediator.Helper.Extensions;

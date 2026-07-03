@@ -1,6 +1,6 @@
 using NotificationService.Domain.Entities;
 
-namespace NotificationService.Application.Notifications.Models;
+namespace NotificationService.Application.Features.Notifications.Models;
 
 public sealed record NotificationDto(
     long Id,

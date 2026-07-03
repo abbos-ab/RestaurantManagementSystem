@@ -1,8 +1,8 @@
-using NotificationService.Application.Notifications.Models;
+using NotificationService.Application.Features.Notifications.Models;
 using NotificationService.Domain.Entities;
 using Riok.Mapperly.Abstractions;
 
-namespace NotificationService.Application.Notifications;
+namespace NotificationService.Application.Features.Notifications;
 
 [Mapper]
 public partial class NotificationMapper

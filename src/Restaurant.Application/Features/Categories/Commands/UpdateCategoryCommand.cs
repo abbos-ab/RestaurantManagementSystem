@@ -56,7 +56,7 @@ internal sealed class UpdateCategoryCommandHandler : ICommandHandler<UpdateCateg
         category.Description = request.Description;
         category.UpdatedAt = _timeProvider.GetLocalDateTimeNowKindUtc();
 
-        await _categoryRepository.UpdateAsync(category, cancellationToken);
+        await _categoryRepository.SaveChangesAsync(cancellationToken);
 
         return _mapper.Map(category);
     }

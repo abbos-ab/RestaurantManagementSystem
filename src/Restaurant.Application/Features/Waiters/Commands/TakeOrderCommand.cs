@@ -75,7 +75,8 @@ internal sealed class TakeOrderCommandHandler : ICommandHandler<TakeOrderCommand
         order.WaiterId = request.WaiterId;
         order.UpdatedAt = _timeProvider.GetLocalDateTimeNowKindUtc();
 
-        await _orderRepository.UpdateAsync(order, cancellationToken);
+        await _orderRepository.SaveChangesAsync(cancellationToken);
+        
         return _orderMapper.Map(order);
     }
 }

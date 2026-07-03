@@ -8,9 +8,11 @@ namespace Restaurant.Mediator.Helper.Exceptions;
 /// </summary>
 public class ResourceNotFoundException : BusinessLogicException
 {
-    public ResourceNotFoundException(Error error)
-        : base(error) { }
+    public ResourceNotFoundException(Error error) : base(error)
+    {
+    }
 
-    public ResourceNotFoundException(Error error, Exception innerException)
-        : base(error, innerException) { }
+    public ResourceNotFoundException(Error error, Exception innerException) : base(error, innerException)
+    {
+    }
 }

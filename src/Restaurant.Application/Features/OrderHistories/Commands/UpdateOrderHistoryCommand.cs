@@ -51,7 +51,7 @@ internal sealed class UpdateOrderHistoryCommandHandler : ICommandHandler<UpdateO
         orderHistory.Action = request.Action;
         orderHistory.Description = request.Description;
 
-        await _historyRepository.UpdateAsync(orderHistory, cancellationToken);
+        await _historyRepository.SaveChangesAsync(cancellationToken);
 
         return _historyMapper.Map(orderHistory);
     }

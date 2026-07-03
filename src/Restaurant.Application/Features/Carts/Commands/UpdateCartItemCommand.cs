@@ -84,7 +84,6 @@ internal sealed class UpdateCartItemCommandHandler : ICommandHandler<UpdateCartI
         cartItem.Quantity = request.Item.Quantity;
         cartItem.Price = dish.Price * request.Item.Quantity;
 
-        await _cartItemRepository.UpdateAsync(cartItem, cancellationToken);
         await _cartItemRepository.SaveChangesAsync(cancellationToken);
 
         return _mapper.Map(cartItem);

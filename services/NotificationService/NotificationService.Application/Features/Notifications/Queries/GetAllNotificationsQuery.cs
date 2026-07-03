@@ -1,12 +1,12 @@
-using NotificationService.Application.Notifications.Models;
-using NotificationService.Application.Notifications.Repositories;
+using NotificationService.Application.Features.Notifications.Models;
+using NotificationService.Application.Features.Notifications.Repositories;
 using NotificationService.Domain.Entities;
 using Restaurant.Mediator.Helper.Common.Extensions;
 using Restaurant.Mediator.Helper.Common.Models;
 using Restaurant.Mediator.Helper.CQRS.Queries;
 using Restaurant.Mediator.Helper.Persistence;
 
-namespace NotificationService.Application.Notifications.Queries;
+namespace NotificationService.Application.Features.Notifications.Queries;
 
 public sealed record GetAllNotificationsQuery(
     PaginationInfo PaginationInfo

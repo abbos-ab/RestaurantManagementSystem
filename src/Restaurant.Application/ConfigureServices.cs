@@ -13,24 +13,25 @@ public static class ConfigureServices
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddSingleton(TimeProvider.System);
-        
+
         services
             .AddScoped<IAccessTokenService, AccessTokenService>()
             .AddScoped<IUserTokenProvider, UserTokenProvider>()
             .AddScoped<IRefreshTokenService, RefreshTokenService>();
-        
+
         services.AddMappers();
 
-        services.AddMediatR(cfg =>
-        {
-            cfg.RegisterServicesFromAssembly(ApplicationRef.Assembly);
-        });
-        
+        services.AddMediatR(cfg => { cfg.RegisterServicesFromAssembly(ApplicationRef.Assembly); });
+
+        services
+            .AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>))
+            .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
         services.AddValidatorsFromAssembly(ApplicationRef.Assembly);
 
         services.AddTransient(typeof(IPipelineBehavior<,>),
             typeof(ValidationBehavior<,>));
-        
+
         return services;
     }
 }

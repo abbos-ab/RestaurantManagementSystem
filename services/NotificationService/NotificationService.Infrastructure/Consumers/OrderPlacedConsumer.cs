@@ -25,7 +25,8 @@ public sealed class OrderPlacedConsumer : IConsumer<OrderPlacedEvent>
 
         if (message.OrderId <= 0)
         {
-            _logger.LogError("Invalid order data received. OrderId: {OrderId}", message.OrderId);
+            _logger.LogError("Invalid order data received. OrderId: {OrderId}",
+                message.OrderId);
             return;
         }
 
