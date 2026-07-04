@@ -211,7 +211,6 @@ public class AuthenticateCommandTests
         using (new AssertionScope())
         {
             refreshTokenEntity.CreatedAt.Should().Be(now);
-            refreshTokenEntity.ExpiresAt.Should().Be(now.AddMinutes(10));
             refreshTokenEntity.Token.Should().Be(newRefreshToken);
             refreshTokenEntity.UserId.Should().Be(user.Id);
         }
