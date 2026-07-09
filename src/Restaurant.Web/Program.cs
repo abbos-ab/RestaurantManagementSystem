@@ -38,6 +38,10 @@ builder.Services
     .AddInfrastructureServices(builder.Configuration, builder.Environment.IsDevelopment())
     .AddJwtConfiguration(builder.Configuration);
 
+builder.Services
+    .AddProblemDetails()
+    .AddExceptionHandler<ExceptionToProblemDetailsHandler>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -57,6 +61,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 
