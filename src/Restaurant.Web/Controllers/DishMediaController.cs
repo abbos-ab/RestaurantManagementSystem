@@ -51,7 +51,7 @@ public class DishMediaController : BaseController
     [HttpGet("{photoId:long}")]
     public async Task<ActionResult<DishMediaDto>> GetById(long photoId, CancellationToken cancellationToken)
     {
-        return Ok(await _mediator.Send(new GetPhotoById(photoId), cancellationToken));
+        return Ok(await _mediator.Send(new GetMediaById(photoId), cancellationToken));
     }
 
     [HttpGet("Dish/{dishId:long}")]

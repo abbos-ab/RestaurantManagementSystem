@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.Extensions.Caching.Memory;
 using Restaurant.Application.Features.Dishes.Repositories;
 using Restaurant.Mediator.Helper.CQRS.Commands;
 using Restaurant.Mediator.Helper.Exceptions;
@@ -20,21 +21,27 @@ internal class DeleteDishCommandValidator : AbstractValidator<DeleteDishCommand>
 internal sealed class DeleteDishCommandHandler : ICommandHandler<DeleteDishCommand, bool>
 {
     private readonly IDishRepository _dishRepository;
+    private readonly IMemoryCache _memoryCache;
 
-    public DeleteDishCommandHandler(IDishRepository dishRepository)
+    public DeleteDishCommandHandler(IDishRepository dishRepository, IMemoryCache memoryCache)
     {
         _dishRepository = dishRepository;
+        _memoryCache = memoryCache;
     }
 
     public async Task<bool> Handle(DeleteDishCommand request, CancellationToken cancellationToken)
     {
+        var cacheKey = $"dish_{request.Id}";
+
         var dish = await _dishRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (dish is null)
             throw new BusinessLogicException(DishErrors.NotFound);
 
         dish.IsActive = false;
-        await _dishRepository.UpdateAsync(dish, cancellationToken);
+        await _dishRepository.SaveChangesAsync(cancellationToken);
+
+        _memoryCache.Remove(cacheKey);
 
         return true;
     }

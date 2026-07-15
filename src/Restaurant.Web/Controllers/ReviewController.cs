@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Restaurant.Application.Features.Review.Commands;
 using Restaurant.Application.Features.Review.Models;
 using Restaurant.Application.Features.Review.Queries;
+using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.Common.Models;
 using Restaurant.Web.Models;
 
@@ -59,5 +60,21 @@ public class ReviewController : BaseController
         CancellationToken cancellationToken = default)
     {
         return await _mediator.Send(new DeleteReviewCommand(reviewId), cancellationToken);
+    }
+
+    [HttpGet]
+    public async Task<IEnumerable<ReviewDto>> GetReviewsByDishId(
+        long dishId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _mediator.Send(new GetDishReviews(dishId), cancellationToken);
+    }
+
+    [HttpGet]
+    public async Task<IEnumerable<ReviewDto>> GetReviewsByReviewType(
+        ReviewType reviewType,
+        CancellationToken cancellationToken = default)
+    {
+        return await _mediator.Send(new GetReviewsByReviewType(reviewType), cancellationToken);
     }
 }

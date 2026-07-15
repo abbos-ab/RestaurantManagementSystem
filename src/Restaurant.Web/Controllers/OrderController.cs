@@ -8,9 +8,9 @@ using Restaurant.Mediator.Helper.Common.Models;
 
 namespace Restaurant.Web.Controllers;
 
-public class OrdersController : BaseController
+public class OrderController : BaseController
 {
-    public OrdersController(IMediator mediator) : base(mediator)
+    public OrderController(IMediator mediator) : base(mediator)
     {
     }
 
@@ -52,7 +52,7 @@ public class OrdersController : BaseController
     }
 
     [HttpPut]
-        public async Task<ActionResult<OrderItemDto>> UpdateOrderItem(
+    public async Task<ActionResult<OrderItemDto>> UpdateOrderItem(
         long itemId,
         [FromBody] UpdateOrderItemCommand command,
         CancellationToken cancellationToken = default)
@@ -113,5 +113,13 @@ public class OrdersController : BaseController
         CancellationToken cancellationToken = default)
     {
         return await _mediator.Send(new GetOrdersByStatus(status), cancellationToken);
+    }
+
+    [HttpGet]
+    public async Task<IEnumerable<OrderDto>> GetByTableId(
+        long tableId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _mediator.Send(new GetOrdersByTableQuery(tableId), cancellationToken);
     }
 }

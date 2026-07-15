@@ -9,9 +9,9 @@ namespace Restaurant.Application.Features.Review.Commands;
 
 public sealed record UpdateReviewCommand(
     long ReviewId,
-    ReviewType ReviewType,
-    Grade Grade,
-    string Comment
+    ReviewType? ReviewType,
+    Grade? Grade,
+    string? Comment
 ) : ICommand<ReviewDto>;
 
 // ReSharper disable once UnusedType.Global
@@ -22,9 +22,6 @@ public sealed class UpdateReviewCommandValidator : AbstractValidator<UpdateRevie
         RuleFor(r => r.ReviewId)
             .GreaterThan(0)
             .WithMessage("The review id must be greater than 0");
-
-        RuleFor(r => r.ReviewType).IsInEnum();
-        RuleFor(r => r.Grade).IsInEnum();
     }
 }
 
@@ -50,11 +47,15 @@ internal sealed class UpdateReviewCommandHandler : ICommandHandler<UpdateReviewC
             request.Comment == review.Comment)
             throw new BusinessLogicException(ReviewErrors.NoChangesDetected);
 
-        review.ReviewType = request.ReviewType;
-        review.Grade = request.Grade;
-        review.Comment = request.Comment;
+        if (request.ReviewType.HasValue)
+            review.ReviewType = (ReviewType)request.ReviewType;
 
-        await _reviewRepository.UpdateAsync(review, cancellationToken);
+        if (request.Grade is null)
+            review.Grade = (Grade)request.Grade!;
+
+        if (request.Comment is not null)
+            review.Comment = request.Comment;
+
         await _reviewRepository.SaveChangesAsync(cancellationToken);
 
         return _mapper.Map(review);

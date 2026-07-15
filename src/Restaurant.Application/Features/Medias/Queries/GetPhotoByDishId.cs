@@ -1,5 +1,6 @@
 using Ardalis.Specification;
 using FluentValidation;
+using Microsoft.Extensions.Caching.Memory;
 using Restaurant.Application.Features.Medias.Models;
 using Restaurant.Application.Features.Medias.Repositories;
 using Restaurant.Application.Features.Medias.Specifications;
@@ -27,20 +28,26 @@ internal sealed class GetPhotoByDishIdHandler : IQueryHandler<GetPhotoByDishId, 
 {
     private readonly IDishMediaRelationRepository _dishMediaRelationRepository;
     private readonly IDishMediaRepository _mediaRepository;
+    private readonly IMemoryCache _memoryCache;
     private readonly DishMediaMapper _mapper;
 
     public GetPhotoByDishIdHandler(IDishMediaRelationRepository dishMediaRelationRepository,
-        IDishMediaRepository mediaRepository, DishMediaMapper mapper)
+        IDishMediaRepository mediaRepository, DishMediaMapper mapper, IMemoryCache memoryCache)
     {
         _dishMediaRelationRepository = dishMediaRelationRepository;
         _mediaRepository = mediaRepository;
         _mapper = mapper;
+        _memoryCache = memoryCache;
     }
 
     public async Task<List<DishMediaDto>> Handle(GetPhotoByDishId request, CancellationToken cancellationToken)
     {
-        var spec = new DishMediaIdsByDishIdSpec(request.DishId);
+        var cacheKey = $"dishMedia_{request.DishId}";
 
+        if (_memoryCache.TryGetValue(cacheKey, out List<DishMediaDto> dishMediaDto))
+            return dishMediaDto;
+
+        var spec = new DishMediaIdsByDishIdSpec(request.DishId);
         var mediaIds = await _dishMediaRelationRepository.ListAsync(spec, cancellationToken);
 
         List<DishMedia> medias = new List<DishMedia>();
@@ -54,6 +61,10 @@ internal sealed class GetPhotoByDishIdHandler : IQueryHandler<GetPhotoByDishId, 
             medias.Add(media);
         }
 
-        return _mapper.Map(medias);
+        dishMediaDto = _mapper.Map(medias);
+
+        _memoryCache.Set(cacheKey, dishMediaDto, TimeSpan.FromDays(1));
+
+        return dishMediaDto;
     }
 }

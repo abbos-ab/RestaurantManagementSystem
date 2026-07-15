@@ -5,6 +5,7 @@ using Restaurant.Application.Features.Dishes.Models;
 using Restaurant.Application.Features.Dishes.Queries;
 using Restaurant.Mediator.Helper.Common.Models;
 using Restaurant.Mediator.Helper.Groups;
+using Restaurant.Web.Models;
 
 namespace Restaurant.Web.Controllers;
 
@@ -55,7 +56,7 @@ public class DishesController : BaseController
     [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
     public async Task<NoContentResult> Update(
         long dishId,
-        [FromBody] CreateDishCommand request,
+        [FromBody] UpdateDishRequest request,
         CancellationToken cancellationToken = default)
     {
         await _mediator.Send(
@@ -63,9 +64,7 @@ public class DishesController : BaseController
                 dishId,
                 request.Name,
                 request.CategoryId,
-                request.Price,
-                request.Description,
-                request.IsActive
+                request.Description
             ),
             cancellationToken
         );
@@ -88,5 +87,14 @@ public class DishesController : BaseController
     {
         await _mediator.Send(new DeleteDishCommand(dishId));
         return new NoContentResult();
+    }
+
+    [HttpGet]
+    public async Task<PaginatedResult<DishDto>> SearchByName(
+        string name,
+        PaginationInfo paginationInfo,
+        CancellationToken cancellationToken = default)
+    {
+        return await _mediator.Send(new SearchDishQuery(name, paginationInfo), cancellationToken);
     }
 }

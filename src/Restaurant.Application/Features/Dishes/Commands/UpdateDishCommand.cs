@@ -8,11 +8,9 @@ namespace Restaurant.Application.Features.Dishes.Commands;
 
 public sealed record UpdateDishCommand(
     long Id,
-    string Name,
-    long CategoryId,
-    decimal Price,
-    string Description,
-    bool IsActive
+    string? Name,
+    long? CategoryId,
+    string? Description
 ) : ICommand<DishDto>;
 
 // ReSharper disable once UnusedType.Global
@@ -22,10 +20,6 @@ internal class UpdateDishCommandValidator : AbstractValidator<UpdateDishCommand>
     {
         RuleFor(x => x.Id)
             .GreaterThan(0);
-
-        RuleFor(x => x.Name)
-            .NotEmpty()
-            .WithMessage("Name is required");
     }
 }
 
@@ -52,11 +46,15 @@ internal sealed class UpdateDishCommandHandler : ICommandHandler<UpdateDishComma
         if (dish is null)
             throw new Exception("Dish not found");
 
-        dish.Name = request.Name;
-        dish.CategoryId = request.CategoryId;
-        dish.Price = request.Price;
-        dish.Description = request.Description;
-        dish.IsActive = request.IsActive;
+        if (request.Name is not null)
+            dish.Name = request.Name;
+
+        if (request.CategoryId.HasValue)
+            dish.CategoryId = request.CategoryId;
+
+        if (request.Description is not null)
+            dish.Description = request.Description;
+
         dish.UpdatedAt = _timeProvider.GetLocalDateTimeNowKindUtc();
 
         await _dishRepository.SaveChangesAsync(cancellationToken);

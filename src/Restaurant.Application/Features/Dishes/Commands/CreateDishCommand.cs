@@ -64,7 +64,6 @@ internal sealed class CreateDishCommandHandler : ICommandHandler<CreateDishComma
 
         await _dishRepository.AddAsync(dish, cancellationToken);
         await _dishRepository.SaveChangesAsync(cancellationToken);
-        
 
         return _mapper.Map(dish);
     }

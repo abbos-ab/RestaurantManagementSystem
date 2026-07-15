@@ -1,9 +1,11 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Restaurant.Application.Common.Extensions;
 using Restaurant.Application.Features.Authentications.Interfaces;
 using Restaurant.Application.Features.Authentications.Services;
+using Restaurant.Mediator.Helper;
 using Restaurant.Mediator.Helper.Behaviors;
 
 namespace Restaurant.Application;
@@ -19,7 +21,9 @@ public static class ConfigureServices
             .AddScoped<IUserTokenProvider, UserTokenProvider>()
             .AddScoped<IRefreshTokenService, RefreshTokenService>();
 
-        services.AddMappers();
+        services
+            .AddMemoryCache()
+            .AddMappers();
 
         services.AddMediatR(cfg => { cfg.RegisterServicesFromAssembly(ApplicationRef.Assembly); });
 
@@ -29,6 +33,8 @@ public static class ConfigureServices
 
         services.AddValidatorsFromAssembly(ApplicationRef.Assembly);
 
+        services.TryAddSingleton<ICurrentUserAccessor, CurrentUserAccessor>();
+        
         services.AddTransient(typeof(IPipelineBehavior<,>),
             typeof(ValidationBehavior<,>));
 

@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.Extensions.Caching.Memory;
 using Restaurant.Application.Features.Dishes.Models;
 using Restaurant.Application.Features.Dishes.Repositories;
 using Restaurant.Mediator.Helper.CQRS.Queries;
@@ -22,21 +23,32 @@ public class GetDishByIdValidator : AbstractValidator<GetDishById>
 internal sealed class GetDishByIdHandler : IQueryHandler<GetDishById, DishDto?>
 {
     private readonly IDishRepository _dishRepository;
+    private readonly IMemoryCache _memoryCache;
     private readonly DishMapper _mapper;
 
-    public GetDishByIdHandler(IDishRepository dishRepository, DishMapper mapper)
+    public GetDishByIdHandler(IDishRepository dishRepository, DishMapper mapper, IMemoryCache memoryCache)
     {
         _dishRepository = dishRepository;
         _mapper = mapper;
+        _memoryCache = memoryCache;
     }
 
     public async Task<DishDto?> Handle(GetDishById request, CancellationToken cancellationToken)
     {
+        var cacheKey = $"dish_{request.Id}";
+
+        if (_memoryCache.TryGetValue(cacheKey, out DishDto? dishDto))
+            return dishDto;
+
         var dish = await _dishRepository.GetByIdAsync(request.Id, cancellationToken);
 
-        if (dish is null)
+        if (dish is null && !dish.IsActive)
             throw new ResourceNotFoundException(DishErrors.NotFound);
 
-        return _mapper.Map(dish);
+        dishDto = _mapper.Map(dish);
+
+        _memoryCache.Set(cacheKey, dishDto, TimeSpan.FromMinutes(10));
+
+        return dishDto;
     }
 }

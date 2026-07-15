@@ -1,5 +1,6 @@
 using Ardalis.Specification;
 using FluentValidation;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Restaurant.Application.Features.Medias.Repositories;
 using Restaurant.Application.Services;
@@ -31,23 +32,28 @@ internal sealed class DeletePhotoCommandHandler : ICommandHandler<DeletePhotoCom
     private readonly IMinioClientService _minioClientService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<DeletePhotoCommandHandler> _logger;
+    private readonly IMemoryCache _memoryCache;
 
     public DeletePhotoCommandHandler(
         IDishMediaRepository dishMediaRepository,
         IDishMediaRelationRepository dishMediaRelationRepository,
         ILogger<DeletePhotoCommandHandler> logger,
-        IUnitOfWork unitOfWork, 
-        IMinioClientService minioClientService)
+        IUnitOfWork unitOfWork,
+        IMinioClientService minioClientService,
+        IMemoryCache memoryCache)
     {
         _dishMediaRepository = dishMediaRepository;
         _dishMediaRelationRepository = dishMediaRelationRepository;
         _logger = logger;
         _unitOfWork = unitOfWork;
         _minioClientService = minioClientService;
+        _memoryCache = memoryCache;
     }
 
     public async Task Handle(DeletePhotoCommand request, CancellationToken cancellationToken)
     {
+        var cacheKey = $"dishMedia_{request.MediaId}";
+
         var mediaSpec = new DbSpecification<DishMedia>();
         mediaSpec.Query.Where(x => x.Id == request.MediaId);
 
@@ -67,10 +73,10 @@ internal sealed class DeletePhotoCommandHandler : ICommandHandler<DeletePhotoCom
         try
         {
             await _minioClientService.RemoveObjectAsync(media.Path);
-            
+
             await _dishMediaRelationRepository.DeleteAsync(mediaRelation, cancellationToken);
             await _dishMediaRepository.DeleteAsync(media, cancellationToken);
-            
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
 
@@ -78,6 +84,7 @@ internal sealed class DeletePhotoCommandHandler : ICommandHandler<DeletePhotoCom
                 "Deleted Dish Media with Id {MediaId}",
                 media.Id
             );
+            _memoryCache.Remove(cacheKey);
         }
         catch (Exception ex)
         {

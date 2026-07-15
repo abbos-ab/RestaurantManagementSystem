@@ -5,6 +5,9 @@ public class Review : BaseEntity
     public long OrderId { get; set; }
     public Order Order { get; set; }
 
+    public long? DishId { get; set; }
+    public Dish? Dish { get; set; }
+
     public long TableId { get; set; }
     public Table Table { get; set; }
 
