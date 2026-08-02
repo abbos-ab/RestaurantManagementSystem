@@ -2,7 +2,7 @@ using AutoFixture;
 using NSubstitute;
 using Restaurant.Application.Features.Authentications.Commands;
 using Restaurant.Application.Features.Authentications.Interfaces;
-using Restaurant.UnitTests.Utils;
+using Restaurant.Mediator.Helper.Utils;
 
 namespace Restaurant.UnitTests.Commands.Authentications;
 

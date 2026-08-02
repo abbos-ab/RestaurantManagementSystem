@@ -1,7 +1,7 @@
 using AutoFixture;
 using AutoFixture.AutoNSubstitute;
 
-namespace Restaurant.UnitTests.Utils;
+namespace Restaurant.Mediator.Helper.Utils;
 
 public static class FixtureExtensions
 {

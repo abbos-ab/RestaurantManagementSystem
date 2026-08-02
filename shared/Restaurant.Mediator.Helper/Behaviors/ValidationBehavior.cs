@@ -3,9 +3,6 @@ using MediatR;
 
 namespace Restaurant.Mediator.Helper.Behaviors;
 
-/// <summary>
-/// Промежуточный обработчик пайплайна для валидации запросов через MediatR.
-/// </summary>
 public sealed class ValidationBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse> where TRequest : class, IBaseRequest
 {

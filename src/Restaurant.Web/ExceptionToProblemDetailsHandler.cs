@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Restaurant.Application.Common.Interfaces;
 using Restaurant.Mediator.Helper.Exceptions;
 
 namespace Restaurant.Web;
@@ -8,10 +9,12 @@ namespace Restaurant.Web;
 public sealed class ExceptionToProblemDetailsHandler : IExceptionHandler
 {
     private readonly IProblemDetailsService _problemDetailsService;
+    private readonly IExceptionNotifier _exceptionNotifier;
 
-    public ExceptionToProblemDetailsHandler(IProblemDetailsService problemDetailsService)
+    public ExceptionToProblemDetailsHandler(IProblemDetailsService problemDetailsService, IExceptionNotifier exceptionNotifier)
     {
         _problemDetailsService = problemDetailsService;
+        _exceptionNotifier = exceptionNotifier;
     }
 
     public async ValueTask<bool> TryHandleAsync(
@@ -19,10 +22,10 @@ public sealed class ExceptionToProblemDetailsHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
+        await _exceptionNotifier.NotifyAsync(exception, httpContext, cancellationToken);
+
         var problemDetails = ConvertToProblemDetails(exception);
 
-        // В HttpContext нет информации о текущем endpoint,
-        // поэтому его необходимо брать из IExceptionHandlerFeature.
         var exceptionHandlerFeature = httpContext.Features.Get<IExceptionHandlerFeature>();
         var endpointMetadata = exceptionHandlerFeature?.Endpoint?.Metadata;
 

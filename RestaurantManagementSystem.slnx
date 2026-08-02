@@ -17,6 +17,8 @@
     <Project Path="src/Restaurant.Web/Restaurant.Web.csproj" />
   </Folder>
   <Folder Name="/src/tests/">
+    <Project Path="src/tests/Restaurant.IntegrationTests/Restaurant.IntegrationTests.csproj" />
     <Project Path="src/tests/Restaurant.UnitTests/Restaurant.UnitTests.csproj" />
+    <Project Path="src/tests/WireMockTest/WireMockTest.csproj" />
   </Folder>
 </Solution>

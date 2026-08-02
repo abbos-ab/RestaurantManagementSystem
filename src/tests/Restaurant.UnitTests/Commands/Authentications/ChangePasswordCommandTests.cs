@@ -10,7 +10,7 @@ using Restaurant.Application.Features.Users.Repositories;
 using Restaurant.Application.Features.Users.Specifications;
 using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.Exceptions;
-using Restaurant.UnitTests.Utils;
+using Restaurant.Mediator.Helper.Utils;
 
 namespace Restaurant.UnitTests.Commands.Authentications;
 

@@ -45,7 +45,7 @@ public class DishesController : BaseController
     }
 
     [HttpPost]
-    [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
+    //[GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
     public async Task<IActionResult> Create(CreateDishCommand command)
     {
         var result = await _mediator.Send(command);
@@ -82,7 +82,7 @@ public class DishesController : BaseController
     }
 
     [HttpDelete("{dishId:long}")]
-    [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
+   // [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
     public async Task<NoContentResult> Delete(long dishId)
     {
         await _mediator.Send(new DeleteDishCommand(dishId));
@@ -91,10 +91,15 @@ public class DishesController : BaseController
 
     [HttpGet]
     public async Task<PaginatedResult<DishDto>> SearchByName(
-        string name,
-        PaginationInfo paginationInfo,
+        [FromQuery] string name,
+        [FromQuery] int index,
+        [FromQuery] int size,
         CancellationToken cancellationToken = default)
     {
-        return await _mediator.Send(new SearchDishQuery(name, paginationInfo), cancellationToken);
+        var pagination = new PaginationInfo(index, size);
+
+        return await _mediator.Send(
+            new SearchDishQuery(name, pagination),
+            cancellationToken);
     }
 }

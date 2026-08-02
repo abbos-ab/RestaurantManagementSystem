@@ -10,8 +10,6 @@ using Restaurant.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
@@ -62,7 +60,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseExceptionHandler();
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 
@@ -74,3 +72,7 @@ app.UseMiddleware<CurrentUserMiddleware>();
 app.MapControllers();
 
 app.Run();
+
+//TODO telegram Send Exception
+//TODO Logging
+//TODO ElasticSearch

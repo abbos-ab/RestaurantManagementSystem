@@ -1,17 +1,22 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Restaurant.Application.Common.Interfaces;
 using Restaurant.Application.Features.Authentications.Commands;
 using Restaurant.Application.Features.Authentications.Models;
+using Restaurant.Infrastructure.Notifications.Telegram;
 using Restaurant.Mediator.Helper.Extensions;
 using Restaurant.Web.Models;
+using Telegram.Bot;
 
 namespace Restaurant.Web.Controllers;
 
 public class AuthController : BaseController
 {
-    public AuthController(IMediator mediator) : base(mediator)
+    private readonly ITelegramBotService _telegramBotService;
+    public AuthController(IMediator mediator, ITelegramBotService telegramBotService) : base(mediator)
     {
+        _telegramBotService = telegramBotService;
     }
 
     /// <summary>

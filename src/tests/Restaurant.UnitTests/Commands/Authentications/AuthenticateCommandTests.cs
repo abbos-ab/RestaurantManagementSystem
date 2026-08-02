@@ -16,7 +16,7 @@ using Restaurant.Domain.Entities;
 using Restaurant.Mediator.Helper.Exceptions;
 using Restaurant.Mediator.Helper.Persistence;
 using Restaurant.Mediator.Helper.Settings;
-using Restaurant.UnitTests.Utils;
+using Restaurant.Mediator.Helper.Utils;
 
 namespace Restaurant.UnitTests.Commands.Authentications;
 

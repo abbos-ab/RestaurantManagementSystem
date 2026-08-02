@@ -8,7 +8,7 @@ using Restaurant.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace Restaurant.Infrastructure.Migrations
+namespace Restaurant.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -35,9 +35,6 @@ namespace Restaurant.Infrastructure.Migrations
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
 
                     b.Property<long>("TableId")
                         .HasColumnType("bigint");
@@ -74,9 +71,6 @@ namespace Restaurant.Infrastructure.Migrations
 
                     b.Property<long>("DishId")
                         .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -116,9 +110,6 @@ namespace Restaurant.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -154,9 +145,6 @@ namespace Restaurant.Infrastructure.Migrations
                         .HasColumnType("character varying(500)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<long?>("MediaPicId")
@@ -205,9 +193,6 @@ namespace Restaurant.Infrastructure.Migrations
                     b.Property<double>("FileWidth")
                         .HasColumnType("double precision");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
                     b.Property<int>("MediaType")
                         .HasColumnType("integer");
 
@@ -243,9 +228,6 @@ namespace Restaurant.Infrastructure.Migrations
                     b.Property<long>("DishId")
                         .HasColumnType("bigint");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
                     b.Property<long>("MediaId")
                         .HasColumnType("bigint");
 
@@ -280,9 +262,6 @@ namespace Restaurant.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -316,9 +295,6 @@ namespace Restaurant.Infrastructure.Migrations
                     b.Property<long>("DishId")
                         .HasColumnType("bigint");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
@@ -345,9 +321,6 @@ namespace Restaurant.Infrastructure.Migrations
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsRead")
                         .HasColumnType("boolean");
@@ -389,9 +362,6 @@ namespace Restaurant.Infrastructure.Migrations
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -437,9 +407,6 @@ namespace Restaurant.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
                     b.Property<long>("OrderId")
                         .HasColumnType("bigint");
 
@@ -483,9 +450,6 @@ namespace Restaurant.Infrastructure.Migrations
 
                     b.Property<long>("DishId")
                         .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
 
                     b.Property<long>("OrderId")
                         .HasColumnType("bigint");
@@ -535,9 +499,6 @@ namespace Restaurant.Infrastructure.Migrations
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
 
                     b.Property<int>("Method")
                         .HasColumnType("integer");
@@ -615,11 +576,11 @@ namespace Restaurant.Infrastructure.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<long?>("DishId")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("Grade")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
 
                     b.Property<long>("OrderId")
                         .HasColumnType("bigint");
@@ -634,6 +595,8 @@ namespace Restaurant.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DishId");
 
                     b.HasIndex("OrderId");
 
@@ -658,9 +621,6 @@ namespace Restaurant.Infrastructure.Migrations
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
 
                     b.Property<int>("Number")
                         .HasColumnType("integer");
@@ -701,9 +661,6 @@ namespace Restaurant.Infrastructure.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("LastName")
@@ -927,6 +884,10 @@ namespace Restaurant.Infrastructure.Migrations
 
             modelBuilder.Entity("Restaurant.Domain.Entities.Review", b =>
                 {
+                    b.HasOne("Restaurant.Domain.Entities.Dish", "Dish")
+                        .WithMany()
+                        .HasForeignKey("DishId");
+
                     b.HasOne("Restaurant.Domain.Entities.Order", "Order")
                         .WithMany()
                         .HasForeignKey("OrderId")
@@ -938,6 +899,8 @@ namespace Restaurant.Infrastructure.Migrations
                         .HasForeignKey("TableId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Dish");
 
                     b.Navigation("Order");
 
