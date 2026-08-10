@@ -19,23 +19,18 @@ public sealed class Notification
 
 public enum NotificationType
 {
-    // Order
     OrderCreated = 0,
     OrderUpdated,
     OrderCancelled,
 
-    // Prepare
     OrderPreparing,
     OrderReady,
 
-    // Service
     OrderServed,
 
-    // Table
     TableCalledWaiter,
     TableChanged,
 
-    // Payment
     PaymentRequested,
     PaymentCompleted,
 

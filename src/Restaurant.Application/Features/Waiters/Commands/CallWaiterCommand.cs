@@ -24,17 +24,10 @@ public sealed class CallWaiterCommandValidator : AbstractValidator<CallWaiterCom
 internal sealed class CallWaiterCommandHandler : ICommandHandler<CallWaiterCommand, bool>
 {
     private readonly IOrderRepository _orderRepository;
-    private readonly IPublishEndpoint _publishEndpoint;
-    private readonly TimeProvider _timeProvider;
 
-    public CallWaiterCommandHandler(
-        IOrderRepository orderRepository,
-        IPublishEndpoint publishEndpoint,
-        TimeProvider timeProvider)
+    public CallWaiterCommandHandler(IOrderRepository orderRepository)
     {
         _orderRepository = orderRepository;
-        _publishEndpoint = publishEndpoint;
-        _timeProvider = timeProvider;
     }
 
     public async Task<bool> Handle(CallWaiterCommand request, CancellationToken cancellationToken)
@@ -42,15 +35,8 @@ internal sealed class CallWaiterCommandHandler : ICommandHandler<CallWaiterComma
         var spec = new WaiterByTableIdSpec(request.TableId);
         var waiter = await _orderRepository.FirstOrDefaultAsync(spec, cancellationToken);
 
-        if (waiter == null)
-            throw new BusinessLogicException(WaiterErrors.NotFound);
-
-        await _publishEndpoint.Publish(new TableCalledWaiterEvent
-        {
-            TableId = request.TableId,
-            WaiterId = waiter.Value,
-            CalledAt = DateTime.UtcNow
-        }, cancellationToken);
+        if (waiter is null)
+            throw new ResourceNotFoundException(WaiterErrors.NotFound);
 
         return true;
     }

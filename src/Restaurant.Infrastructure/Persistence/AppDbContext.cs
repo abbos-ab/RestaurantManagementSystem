@@ -22,6 +22,8 @@ public class AppDbContext : DbContext, IUnitOfWork
     public DbSet<Dish> Dishes { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Cart> Carts { get; set; }
+    public DbSet<AuditLog> AuditLogs { get; set; }
+    public DbSet<Review> Reviews { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
     public DbSet<DishMedia> DishMedias { get; set; }
     public DbSet<Group> Groups { get; set; }
@@ -33,15 +35,12 @@ public class AppDbContext : DbContext, IUnitOfWork
     {
         modelBuilder.ApplyConfigurationsFromAssembly(InfrastructureRef.Assembly);
     }
-
-
-    /// <inheritdoc cref="IUnitOfWork.SaveChangesAsync"/>
+    
     async Task<int> IUnitOfWork.SaveChangesAsync(CancellationToken cancellationToken)
     {
         return await SaveChangesAsync(cancellationToken);
     }
 
-    /// <inheritdoc cref="IUnitOfWork.BeginTransactionAsync(CancellationToken)"/>
     async Task<ITransaction> IUnitOfWork.BeginTransactionAsync(CancellationToken cancellationToken)
     {
         var transaction = await Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);

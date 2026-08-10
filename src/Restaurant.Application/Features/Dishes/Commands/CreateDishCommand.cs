@@ -61,18 +61,10 @@ internal sealed class CreateDishCommandHandler : ICommandHandler<CreateDishComma
             IsActive = request.IsActive,
             CreatedAt = _timeProvider.GetLocalDateTimeNowKindUtc(),
         };
-
-        Console.WriteLine(dish.CategoryId);
-        Console.WriteLine(dish.Description);
         
         await _dishRepository.AddAsync(dish, cancellationToken);
         await _dishRepository.SaveChangesAsync(cancellationToken);
 
-        var dto = _mapper.Map(dish);
-        
-        Console.WriteLine(dto.CategoryId);
-        Console.WriteLine(dto.Description);
-        
-        return dto;
+        return _mapper.Map(dish);
     }
 }

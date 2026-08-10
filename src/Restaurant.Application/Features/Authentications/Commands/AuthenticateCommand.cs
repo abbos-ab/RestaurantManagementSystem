@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Microsoft.AspNetCore.Identity;
 using Restaurant.Application.Features.Authentications.Interfaces;
 using Restaurant.Application.Features.Authentications.Models;
 using Restaurant.Application.Features.Users.Repositories;
@@ -17,7 +16,7 @@ namespace Restaurant.Application.Features.Authentications.Commands;
 public sealed record AuthenticateCommand(
     string PhoneNumber,
     string Password
-) : ICommand<AuthenticateResponse>;
+) : ICommand<AuthenticateResponse>, IAnonymousCommand;
 
 // ReSharper disable once UnusedType.Global
 public sealed class AuthenticateCommandValidator : AbstractValidator<AuthenticateCommand>
@@ -32,7 +31,6 @@ public sealed class AuthenticateCommandValidator : AbstractValidator<Authenticat
 internal sealed class AuthenticateCommandHandler : ICommandHandler<AuthenticateCommand, AuthenticateResponse>
 {
     private readonly IUserRepository _userRepository;
-    private readonly IPasswordHasher<User> _passwordHasher;
     private readonly IAccessTokenService _accessTokenService;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
@@ -43,7 +41,6 @@ internal sealed class AuthenticateCommandHandler : ICommandHandler<AuthenticateC
     public AuthenticateCommandHandler(
         IUserRepository userRepository,
         TimeProvider timeProvider,
-        IPasswordHasher<User> passwordHasher,
         IAccessTokenService accessTokenService,
         IRefreshTokenService refreshTokenService,
         IRefreshTokenRepository refreshTokenRepository,
@@ -52,7 +49,6 @@ internal sealed class AuthenticateCommandHandler : ICommandHandler<AuthenticateC
     {
         _userRepository = userRepository;
         _timeProvider = timeProvider;
-        _passwordHasher = passwordHasher;
         _accessTokenService = accessTokenService;
         _refreshTokenService = refreshTokenService;
         _refreshTokenRepository = refreshTokenRepository;
@@ -77,8 +73,11 @@ internal sealed class AuthenticateCommandHandler : ICommandHandler<AuthenticateC
         if (!user.IsActive)
             throw new AccessDeniedException(AuthErrors.UserIsDisabled);
 
-        var verificationResult = _passwordHasher.VerifyHashedPassword(user, user.Password, request.Password);
-        if (verificationResult is PasswordVerificationResult.Failed)
+        var isPasswordValid = BCrypt.Net.BCrypt.Verify(
+            request.Password,
+            user.Password);
+
+        if (!isPasswordValid)
             throw new UnauthorizedException(AuthErrors.InvalidCredentials);
 
         var accessToken = await _accessTokenService.CreateToken(user);

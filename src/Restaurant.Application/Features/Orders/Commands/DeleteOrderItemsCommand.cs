@@ -34,20 +34,17 @@ internal class DeleteOrderItemsCommandHandler : ICommandHandler<DeleteOrderItems
     private readonly IOrderRepository _orderRepository;
     private readonly IOrderItemRepository _orderItemRepository;
     private readonly IMediator _mediator;
-    private readonly IPublishEndpoint _publishEndpoint;
     private readonly TimeProvider _timeProvider;
 
     public DeleteOrderItemsCommandHandler(
         IOrderRepository orderRepository,
         IOrderItemRepository orderItemRepository,
         IMediator mediator,
-        IPublishEndpoint publishEndpoint,
         TimeProvider timeProvider)
     {
         _orderRepository = orderRepository;
         _orderItemRepository = orderItemRepository;
         _mediator = mediator;
-        _publishEndpoint = publishEndpoint;
         _timeProvider = timeProvider;
     }
 
@@ -77,14 +74,6 @@ internal class DeleteOrderItemsCommandHandler : ICommandHandler<DeleteOrderItems
         await _orderItemRepository.DeleteRangeAsync(orderItemsForDelete, cancellationToken);
 
         await _orderItemRepository.SaveChangesAsync(cancellationToken);
-
-        await _publishEndpoint.Publish(new OrderCancelledEvent
-        {
-            OrderId = order.Id,
-            UserId = order.WaiterId,
-            Reason = "Customer changed mind",
-            CancelledAt = _timeProvider.GetLocalDateTimeNowKindUtc()
-        }, cancellationToken);
 
         await _mediator.Publish(new CreateOrderHistoryEvent(
                 order.Id,

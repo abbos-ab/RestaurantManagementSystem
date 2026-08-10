@@ -49,7 +49,6 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
     private readonly TimeProvider _timeProvider;
     private readonly OrderMapper _mapper;
     private readonly IMediator _mediator;
-    private readonly IPublishEndpoint _publishEndpoint;
 
     public CreateOrderCommandHandler(
         IOrderRepository orderRepository,
@@ -58,8 +57,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
         TimeProvider timeProvider, OrderMapper mapper,
         ITableRepository tableRepository,
         IOrderItemRepository orderItemRepository,
-        IMediator mediator,
-        IPublishEndpoint publishEndpoint)
+        IMediator mediator)
     {
         _orderRepository = orderRepository;
         _dishRepository = dishRepository;
@@ -68,7 +66,6 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
         _tableRepository = tableRepository;
         _orderItemRepository = orderItemRepository;
         _mediator = mediator;
-        _publishEndpoint = publishEndpoint;
         _inventoryRepository = inventoryRepository;
     }
 
@@ -152,14 +149,6 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
 
         order.TotalPrice += total;
         await _orderRepository.SaveChangesAsync(cancellationToken);
-
-        await _publishEndpoint.Publish(new OrderPlacedEvent
-        {
-            OrderId = order.Id,
-            UserId = order.WaiterId,
-            CustomerName = "TEST",
-            TotalAmount = order.TotalPrice
-        }, cancellationToken);
 
         await _mediator.Publish(new CreateOrderHistoryEvent(
                 order.Id,

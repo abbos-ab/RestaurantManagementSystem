@@ -34,18 +34,15 @@ internal sealed class UpdateOrderStatusCommandHandler : ICommandHandler<UpdateOr
     private readonly IOrderRepository _orderRepository;
     private readonly TimeProvider _timeProvider;
     private readonly IMediator _mediator;
-    private readonly IPublishEndpoint _publishEndpoint;
 
     public UpdateOrderStatusCommandHandler(
         IOrderRepository orderRepository,
         TimeProvider timeProvider,
-        IMediator mediator,
-        IPublishEndpoint publishEndpoint)
+        IMediator mediator)
     {
         _orderRepository = orderRepository;
         _timeProvider = timeProvider;
         _mediator = mediator;
-        _publishEndpoint = publishEndpoint;
     }
 
     public async Task<bool> Handle(UpdateOrderStatusCommand request, CancellationToken cancellationToken)
@@ -59,15 +56,6 @@ internal sealed class UpdateOrderStatusCommandHandler : ICommandHandler<UpdateOr
         order.UpdatedAt = _timeProvider.GetLocalDateTimeNowKindUtc();
 
         await _orderRepository.UpdateAsync(order, cancellationToken);
-
-        await _publishEndpoint.Publish(new OrderUpdatedEvent
-        {
-            OrderId = order.Id,
-            UserId = order.WaiterId,
-            TotalAmount = order.TotalPrice,
-            UpdateDescription = "Order items were updated.",
-            UpdatedAt = _timeProvider.GetLocalDateTimeNowKindUtc()
-        }, cancellationToken);
 
         await _mediator.Publish(new CreateOrderHistoryEvent(
                 order.Id,

@@ -2,6 +2,8 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Restaurant.Application.Common.Behaviors;
+using Restaurant.Application.Common.Context;
 using Restaurant.Application.Common.Extensions;
 using Restaurant.Application.Features.Authentications.Interfaces;
 using Restaurant.Application.Features.Authentications.Services;
@@ -29,11 +31,15 @@ public static class ConfigureServices
 
         services
             .AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>))
-            .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>))
+            .AddScoped(typeof(IPipelineBehavior<,>), typeof(AuditBehavior<,>));
 
         services.AddValidatorsFromAssembly(ApplicationRef.Assembly);
 
         services.TryAddSingleton<ICurrentUserAccessor, CurrentUserAccessor>();
+        
+        services.AddHttpContextAccessor();
+        services.AddScoped<IRequestContext, RequestContext>();
         
         services.AddTransient(typeof(IPipelineBehavior<,>),
             typeof(ValidationBehavior<,>));

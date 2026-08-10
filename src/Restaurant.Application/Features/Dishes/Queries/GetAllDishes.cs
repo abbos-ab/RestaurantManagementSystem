@@ -22,7 +22,12 @@ internal sealed class GetAllDishesHandler : IQueryHandler<GetAllDishes, Paginate
         _dishRepository = dishRepository;
         _mapper = mapper;
     }
-
+/// <summary>
+/// TODO maintoring
+/// </summary>
+/// <param name="request"></param>
+/// <param name="cancellationToken"></param>
+/// <returns></returns>
     public async Task<PaginatedResult<DishDto>> Handle(GetAllDishes request, CancellationToken cancellationToken)
     {
         var spec = new ReadOnlySpecification<Dish>();

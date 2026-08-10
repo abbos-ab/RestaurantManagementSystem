@@ -10,13 +10,11 @@ public class CreateDishControllerTests : IClassFixture<CustomWebApplicationFacto
 {
     private readonly HttpClient _httpClient;
 
-    private readonly List<long> _createdIds = new();
-
-    public CreateDishControllerTests(CustomWebApplicationFactory factory)
+    public CreateDishControllerTests(CustomWebApplicationFactory applicationFactory)
     {
-        _httpClient = factory.CreateClient();
+        _httpClient = applicationFactory.CreateClient();
     }
-    
+
     [Fact]
     public async Task Create_Return_Ok_WhenDishIsCreated()
     {
@@ -24,9 +22,9 @@ public class CreateDishControllerTests : IClassFixture<CustomWebApplicationFacto
         var command = new CreateDishCommand(
             Name: "Pizza",
             CategoryId: 6,
-            Price: 10,
             Description: "Pizza test",
-            IsActive: true
+            IsActive: true,
+            Price: 12
         );
 
         // Act
@@ -34,9 +32,6 @@ public class CreateDishControllerTests : IClassFixture<CustomWebApplicationFacto
 
         // Assert
         var customerResponse = await response.Content.ReadFromJsonAsync<DishDto>();
-        _createdIds.Add(customerResponse!.Id);
-        customerResponse.CategoryId.Should().Be(command.CategoryId);
-        customerResponse.Description.Should().Be(command.Description);
         customerResponse.Should().BeEquivalentTo(command);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }

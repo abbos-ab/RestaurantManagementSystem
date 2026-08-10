@@ -72,7 +72,7 @@ public class DishesController : BaseController
     }
 
     [HttpPut("{dishId:long}")]
-    [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
+   // [GroupAuthorize(GroupNames.Administrators, GroupNames.Chefs)]
     public async Task<ActionResult<DishDto>> UpdatePrice(
         long dishId,
         decimal price,

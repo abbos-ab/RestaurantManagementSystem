@@ -43,7 +43,6 @@ internal sealed class CreatePaymentCommandHandler : ICommandHandler<CreatePaymen
     private readonly IPaymentRepository _paymentRepository;
     private readonly IOrderRepository _orderRepository;
     private readonly PaymentMapper _mapper;
-    private readonly IPublishEndpoint _publishEndpoint;
     private readonly TimeProvider _timeProvider;
 
     public CreatePaymentCommandHandler(
@@ -51,13 +50,11 @@ internal sealed class CreatePaymentCommandHandler : ICommandHandler<CreatePaymen
         IOrderRepository orderRepository,
         IUserRepository userRepository,
         PaymentMapper mapper,
-        IPublishEndpoint publishEndpoint,
         TimeProvider timeProvider)
     {
         _paymentRepository = paymentRepository;
         _orderRepository = orderRepository;
         _mapper = mapper;
-        _publishEndpoint = publishEndpoint;
         _timeProvider = timeProvider;
     }
 
@@ -90,15 +87,6 @@ internal sealed class CreatePaymentCommandHandler : ICommandHandler<CreatePaymen
 
         await _paymentRepository.AddAsync(payment, cancellationToken);
         await _paymentRepository.SaveChangesAsync(cancellationToken);
-
-        await _publishEndpoint.Publish(new PaymentRequestedEvent
-        {
-            OrderId = payment.OrderId,
-            WaiterId = payment.WaiterId,
-            Amount = payment.Amount,
-            Message = "Payment Created",
-            CreatedAt = _timeProvider.GetLocalDateTimeNowKindUtc()
-        }, cancellationToken);
 
         return _mapper.Map(payment);
     }

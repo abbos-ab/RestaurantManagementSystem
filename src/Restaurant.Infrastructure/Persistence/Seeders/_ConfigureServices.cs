@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Restaurant.Infrastructure.Persistence.Seeders.Interfaces;
-using Transportation.Infrastructure.Persistence;
 
 namespace Restaurant.Infrastructure.Persistence.Seeders;
 
@@ -15,8 +14,10 @@ internal static class ConfigureServices
             .AddScoped<IDatabaseSeeder, CategoryDatabaseSeeder>()
             .AddScoped<IDatabaseSeeder, UserDatabaseSeeder>()
             .AddScoped<IDatabaseSeeder, DishDatabaseSeeder>()
-            .AddScoped<IDatabaseSeeder, TableDatabaseSeeder>();
-
+            .AddScoped<IDatabaseSeeder, TableDatabaseSeeder>()
+            .AddScoped<IDatabaseSeeder, UserDatabaseSeeder>()
+            .AddScoped<IDatabaseSeeder, UserGroupRelationDatabaseSeeder>();
+        
         return services;
     }
 }

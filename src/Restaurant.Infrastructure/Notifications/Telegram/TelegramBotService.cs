@@ -26,3 +26,4 @@ public sealed class TelegramBotService : ITelegramBotService
         await _telegramBotClient.SendMessage(chatId: _telegramBotOptions.ChatId, text: message, cancellationToken: cancellationToken);
     }
 }
+//TODO RC cola

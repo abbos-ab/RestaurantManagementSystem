@@ -33,18 +33,15 @@ internal sealed class DeleteOrderCommandHandler : ICommandHandler<DeleteOrderCom
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IMediator _mediator;
-    private readonly IPublishEndpoint _publishEndpoint;
     private readonly TimeProvider _timeProvider;
 
     public DeleteOrderCommandHandler(
         IOrderRepository orderRepository,
         IMediator mediator,
-        IPublishEndpoint publishEndpoint,
         TimeProvider timeProvider)
     {
         _orderRepository = orderRepository;
         _mediator = mediator;
-        _publishEndpoint = publishEndpoint;
         _timeProvider = timeProvider;
     }
 
@@ -67,14 +64,6 @@ internal sealed class DeleteOrderCommandHandler : ICommandHandler<DeleteOrderCom
                 null
             ),
             cancellationToken);
-
-        await _publishEndpoint.Publish(new OrderCancelledEvent
-        {
-            OrderId = order.Id,
-            UserId = order.WaiterId,
-            Reason = "Customer changed mind",
-            CancelledAt = _timeProvider.GetLocalDateTimeNowKindUtc()
-        }, cancellationToken);
 
         await _orderRepository.DeleteAsync(order, cancellationToken);
 

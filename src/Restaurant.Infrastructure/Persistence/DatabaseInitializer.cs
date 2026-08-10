@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Restaurant.Infrastructure.Persistence;
 using Restaurant.Infrastructure.Persistence.Seeders.Interfaces;
 
-namespace Transportation.Infrastructure.Persistence;
+namespace Restaurant.Infrastructure.Persistence;
 
 internal sealed class DatabaseInitializer : IHostedService
 {

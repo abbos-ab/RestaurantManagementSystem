@@ -32,20 +32,17 @@ internal sealed class UpdatePaymentStatusCommandHandler : ICommandHandler<Update
     private readonly IPaymentRepository _paymentRepository;
     private readonly PaymentMapper _mapper;
     private readonly IMediator _mediator;
-    private readonly IPublishEndpoint _publishEndpoint;
     private readonly TimeProvider _timeProvider;
 
     public UpdatePaymentStatusCommandHandler(
         IPaymentRepository paymentRepository,
         PaymentMapper mapper,
         IMediator mediator,
-        IPublishEndpoint publishEndpoint,
         TimeProvider timeProvider)
     {
         _paymentRepository = paymentRepository;
         _mapper = mapper;
         _mediator = mediator;
-        _publishEndpoint = publishEndpoint;
         _timeProvider = timeProvider;
     }
 
@@ -57,16 +54,6 @@ internal sealed class UpdatePaymentStatusCommandHandler : ICommandHandler<Update
 
         payment.Status = request.Status;
         await _paymentRepository.UpdateAsync(payment, cancellationToken);
-
-        await _publishEndpoint.Publish(new PaymentStatusUpdatedEvent
-        {
-            PaymentId = payment.Id,
-            OrderId = payment.OrderId,
-            WaiterId = payment.WaiterId,
-            Status = payment.Status.ToString(),
-            Message = $"Payment status updated to {payment.Status}.",
-            UpdatedAt = _timeProvider.GetLocalDateTimeNowKindUtc()
-        }, cancellationToken);
 
         await _mediator.Publish(new CreateOrderHistoryEvent(
                 payment.OrderId,

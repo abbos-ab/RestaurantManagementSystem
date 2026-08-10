@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Restaurant.Application.Features.AuditLogs.Repositories;
 using Restaurant.Application.Features.Authentications.Interfaces;
 using Restaurant.Application.Features.Carts.Repositories;
 using Restaurant.Application.Features.Categories.Repositories;
@@ -37,9 +38,9 @@ public static class ConfigureServices
         services.AddScoped<IGroupRepository, GroupRepository>();
         services.AddScoped<IDishMediaRepository, DishMediaRepository>();
         services.AddScoped<IDishMediaRelationRepository, DishMediaRelationRepository>();
-        services.AddScoped<IReviewRepository, ReviewRepositories>();
+        services.AddScoped<IReviewRepository, ReviewRepository>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
-        
+        services.AddScoped<IAuditRepository, AuditLogRepository>();
         return services;
     }
 }

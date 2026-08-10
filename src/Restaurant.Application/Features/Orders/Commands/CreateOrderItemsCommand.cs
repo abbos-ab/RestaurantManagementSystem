@@ -46,7 +46,6 @@ internal sealed class CreateOrderItemCommandHandler : ICommandHandler<CreateOrde
     private readonly IInventoryRepository _inventoryRepository;
     private readonly TimeProvider _timeProvider;
     private readonly IMediator _mediator;
-    private readonly IPublishEndpoint _publishEndpoint;
 
     public CreateOrderItemCommandHandler(
         IOrderRepository orderRepository,
@@ -54,8 +53,7 @@ internal sealed class CreateOrderItemCommandHandler : ICommandHandler<CreateOrde
         IDishRepository dishRepository,
         IInventoryRepository inventoryRepository,
         TimeProvider timeProvider,
-        IMediator mediator,
-        IPublishEndpoint publishEndpoint)
+        IMediator mediator)
     {
         _orderRepository = orderRepository;
         _orderItemRepository = orderItemRepository;
@@ -63,7 +61,6 @@ internal sealed class CreateOrderItemCommandHandler : ICommandHandler<CreateOrde
         _inventoryRepository = inventoryRepository;
         _timeProvider = timeProvider;
         _mediator = mediator;
-        _publishEndpoint = publishEndpoint;
     }
 
     public async Task<bool> Handle(CreateOrderItemsCommand request, CancellationToken cancellationToken)
@@ -142,17 +139,8 @@ internal sealed class CreateOrderItemCommandHandler : ICommandHandler<CreateOrde
 
         await _inventoryRepository.SaveChangesAsync(cancellationToken);
         await _orderItemRepository.AddRangeAsync(newOrderItems, cancellationToken);
-        await _orderItemRepository.UpdateRangeAsync(oldOrderItems, cancellationToken);
         await _orderItemRepository.SaveChangesAsync(cancellationToken);
         await _orderRepository.SaveChangesAsync(cancellationToken);
-
-        await _publishEndpoint.Publish(new OrderPlacedEvent
-        {
-            OrderId = order.Id,
-            UserId = order.WaiterId,
-            CustomerName = "TEST orderItemCreate",
-            TotalAmount = order.TotalPrice
-        }, cancellationToken);
 
         await _mediator.Publish(new CreateOrderHistoryEvent(
                 order.Id,

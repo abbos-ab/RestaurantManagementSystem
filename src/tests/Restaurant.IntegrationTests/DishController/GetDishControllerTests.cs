@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Restaurant.Application.Features.Dishes.Models;
@@ -33,7 +34,7 @@ public class GetDishControllerTests : IClassFixture<WebApplicationFactory<Progra
         problem!.Title.Should().Be("Dish not found");
         problem.Status.Should().Be(404);
     }
-    
+
     [Fact]
     public async Task Get_Return_Ok_WhenDishExists()
     {
@@ -46,7 +47,7 @@ public class GetDishControllerTests : IClassFixture<WebApplicationFactory<Progra
         var customerResponse = await response.Content.ReadFromJsonAsync<DishDto>();
         customerResponse!.Name.Should().Be("Lavash");
     }
-    
+
     [Fact]
     public async Task Get_Return_Ok_WhenDishExists_WithName()
     {

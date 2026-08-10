@@ -3,4 +3,12 @@ using Restaurant.Domain.Entities;
 
 namespace Restaurant.Application.Features.Users.Repositories;
 
-public interface IUserRepository : IRepositoryBase<User>;
+public interface IUserRepository : IRepositoryBase<User>
+{
+    Task<int> GetActiveWaitersCountAsync(
+        CancellationToken cancellationToken);
+
+
+    Task<int> GetActiveChefsCountAsync(
+        CancellationToken cancellationToken);
+}

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -5,8 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Restaurant.Infrastructure.Persistence;
-using Restaurant.IntegrationTests;
+using Restaurant.IntegrationTests.Auth;
 using Testcontainers.PostgreSql;
+
+namespace Restaurant.IntegrationTests;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
@@ -18,7 +21,6 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
             .Build();
 
     private readonly GitHubApiServer _gitHubApiServer = new();
-    
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureTestServices(services =>
@@ -27,12 +29,19 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
 
             services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseNpgsql(
-                    _container.GetConnectionString());
+                options.UseNpgsql(_container.GetConnectionString());
             });
+
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = TestAuthHandler.AuthenticationScheme;
+                    options.DefaultChallengeScheme = TestAuthHandler.AuthenticationScheme;
+                })
+                .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
+                    TestAuthHandler.AuthenticationScheme,
+                    _ => { });
         });
     }
-
 
     public async Task InitializeAsync()
     {
@@ -48,7 +57,6 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
         _gitHubApiServer.Start();
         _gitHubApiServer.SetupUser("validUSer");
     }
-
 
     public async Task DisposeAsync()
     {
